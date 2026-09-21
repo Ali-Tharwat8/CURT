@@ -1,0 +1,505 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1280" width="1920" height="1280" style="background-color: #F8FAFC; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;">
+  <defs>
+    <!-- Soft Table Drop Shadow -->
+    <filter id="shadow" x="-5%" y="-5%" width="112%" height="115%">
+      <feDropShadow dx="0" dy="8" stdDeviation="10" flood-color="#0F172A" flood-opacity="0.08"/>
+      <feDropShadow dx="0" dy="2" stdDeviation="4" flood-color="#0F172A" flood-opacity="0.04"/>
+    </filter>
+
+    <!-- Relationship Markers -->
+    <marker id="arrow-blue" markerWidth="9" markerHeight="9" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L6,3 z" fill="#0284C7"/>
+    </marker>
+    <marker id="arrow-purple" markerWidth="9" markerHeight="9" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L6,3 z" fill="#7C3AED"/>
+    </marker>
+    <marker id="arrow-amber" markerWidth="9" markerHeight="9" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L6,3 z" fill="#D97706"/>
+    </marker>
+    <marker id="arrow-emerald" markerWidth="9" markerHeight="9" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L6,3 z" fill="#0D9488"/>
+    </marker>
+    <marker id="arrow-rose" markerWidth="9" markerHeight="9" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L6,3 z" fill="#E11D48"/>
+    </marker>
+  </defs>
+
+  <!-- Canvas Background -->
+  <rect width="100%" height="100%" fill="#F8FAFC"/>
+
+  <!-- Subtle Blueprint Grid -->
+  <g opacity="0.35">
+    <pattern id="grid" width="32" height="32" patternUnits="userSpaceOnUse">
+      <path d="M 32 0 L 0 0 0 32" fill="none" stroke="#E2E8F0" stroke-width="0.8"/>
+    </pattern>
+    <rect width="100%" height="100%" fill="url(#grid)" />
+  </g>
+
+  <!-- Title Header -->
+  <g transform="translate(60, 55)">
+    <text x="0" y="0" font-size="28" font-weight="800" fill="#0F172A" letter-spacing="-0.5">CURT TEAM PROJECT MANAGEMENT SYSTEM</text>
+    <text x="0" y="28" font-size="15" font-weight="500" fill="#64748B">Relational Database Schema Diagram (PostgreSQL / Drizzle ORM)</text>
+  </g>
+
+  <!-- Legend -->
+  <g transform="translate(1380, 45)">
+    <rect x="0" y="0" width="480" height="46" rx="8" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1.2" filter="url(#shadow)"/>
+    
+    <rect x="16" y="14" width="28" height="18" rx="4" fill="#D97706"/>
+    <text x="30" y="27" font-size="10" font-weight="bold" fill="#FFFFFF" text-anchor="middle">PK</text>
+    <text x="50" y="27" font-size="12" font-weight="600" fill="#334155">Primary Key</text>
+
+    <rect x="135" y="14" width="28" height="18" rx="4" fill="#0284C7"/>
+    <text x="149" y="27" font-size="10" font-weight="bold" fill="#FFFFFF" text-anchor="middle">FK</text>
+    <text x="169" y="27" font-size="12" font-weight="600" fill="#334155">Foreign Key</text>
+
+    <rect x="250" y="14" width="28" height="18" rx="4" fill="#7C3AED"/>
+    <text x="264" y="27" font-size="10" font-weight="bold" fill="#FFFFFF" text-anchor="middle">UK</text>
+    <text x="284" y="27" font-size="12" font-weight="600" fill="#334155">Unique</text>
+
+    <circle cx="355" cy="23" r="5" fill="#0D9488"/>
+    <text x="366" y="27" font-size="12" font-weight="600" fill="#334155">Enum/RBAC</text>
+
+    <line x1="440" y1="23" x2="465" y2="23" stroke="#0284C7" stroke-width="2.5" marker-end="url(#arrow-blue)"/>
+  </g>
+
+  <!-- ==================== RELATIONSHIP CONNECTOR PATHS ==================== -->
+  <g stroke-linecap="round" stroke-linejoin="round">
+    
+    <!-- 1. profiles.user_id -> users.id (1:1 CASCADE) -->
+    <!-- profiles right edge (x=520, y=228) to users left edge (x=670, y=192) -->
+    <path d="M 520 228 H 595 V 192 H 670" fill="none" stroke="#0284C7" stroke-width="2.4" marker-end="url(#arrow-blue)"/>
+    <rect x="555" y="196" width="75" height="22" rx="4" fill="#EFF6FF" stroke="#0284C7" stroke-width="1"/>
+    <text x="592" y="211" font-size="11" font-weight="700" fill="#0284C7" text-anchor="middle">1 : 1 (CASC)</text>
+
+    <!-- 2. refresh_tokens.user_id -> users.id (N:1 CASCADE) -->
+    <!-- refresh_tokens left edge (x=1360, y=228) to users right edge (x=1150, y=192) -->
+    <path d="M 1360 228 H 1255 V 192 H 1150" fill="none" stroke="#7C3AED" stroke-width="2.4" marker-end="url(#arrow-purple)"/>
+    <rect x="1218" y="196" width="75" height="22" rx="4" fill="#F5F3FF" stroke="#7C3AED" stroke-width="1"/>
+    <text x="1255" y="211" font-size="11" font-weight="700" fill="#7C3AED" text-anchor="middle">N : 1 (CASC)</text>
+
+    <!-- 3. projects.created_by -> users.id (1:N CASCADE) -->
+    <!-- projects top edge (x=290, y=660) to users bottom edge (x=760, y=455) -->
+    <path d="M 290 660 V 550 H 760 V 455" fill="none" stroke="#D97706" stroke-width="2.4" marker-end="url(#arrow-amber)"/>
+    <rect x="420" y="538" width="130" height="24" rx="4" fill="#FFFBEB" stroke="#D97706" stroke-width="1"/>
+    <text x="485" y="554" font-size="11" font-weight="700" fill="#D97706" text-anchor="middle">CREATED_BY (CASC)</text>
+
+    <!-- 4. project_members.user_id -> users.id (1:N CASCADE) -->
+    <!-- project_members top edge (x=910, y=660) to users bottom edge (x=910, y=455) -->
+    <path d="M 910 660 V 455" fill="none" stroke="#0D9488" stroke-width="2.4" marker-end="url(#arrow-emerald)"/>
+    <rect x="850" y="540" width="120" height="24" rx="4" fill="#F0FDFA" stroke="#0D9488" stroke-width="1"/>
+    <text x="910" y="556" font-size="11" font-weight="700" fill="#0D9488" text-anchor="middle">MEMBER (CASC)</text>
+
+    <!-- 5. project_members.project_id -> projects.id (1:N CASCADE) -->
+    <!-- project_members left edge (x=670, y=748) to projects right edge (x=520, y=712) -->
+    <path d="M 670 748 H 595 V 712 H 520" fill="none" stroke="#0D9488" stroke-width="2.4" marker-end="url(#arrow-emerald)"/>
+    <rect x="555" y="718" width="75" height="22" rx="4" fill="#F0FDFA" stroke="#0D9488" stroke-width="1"/>
+    <text x="592" y="733" font-size="11" font-weight="700" fill="#0D9488" text-anchor="middle">N : 1 (CASC)</text>
+
+    <!-- 6. tasks.assigned_to -> users.id (N:1 SET NULL) -->
+    <!-- Comes out of tasks left edge at (x=1360, y=784), goes left into open corridor at x=1220, up to y=230, and into users right edge at (x=1150, y=230) -->
+    <path d="M 1360 784 H 1220 V 230 H 1150" fill="none" stroke="#0284C7" stroke-width="2.4" stroke-dasharray="7,4" marker-end="url(#arrow-blue)"/>
+    <rect x="1145" y="470" width="150" height="26" rx="4" fill="#EFF6FF" stroke="#0284C7" stroke-width="1.2"/>
+    <text x="1220" y="487" font-size="11" font-weight="700" fill="#0284C7" text-anchor="middle">ASSIGNED (SET NULL)</text>
+
+    <!-- 7. tasks.project_id -> projects.id (1:N CASCADE) -->
+    <!-- Comes out of tasks bottom at (x=1590, y=1100), goes down to y=1200, across to x=290, and up to projects bottom (x=290, y=980) -->
+    <path d="M 1590 1100 V 1200 H 290 V 980" fill="none" stroke="#E11D48" stroke-width="2.4" marker-end="url(#arrow-rose)"/>
+    <rect x="850" y="1187" width="180" height="26" rx="4" fill="#FFF1F2" stroke="#E11D48" stroke-width="1.2"/>
+    <text x="940" y="1204" font-size="12" font-weight="700" fill="#E11D48" text-anchor="middle">PROJECT TASKS (CASCADE)</text>
+  </g>
+
+
+  <!-- ==================== TABLE 1: USERS (Center Top) ==================== -->
+  <g transform="translate(670, 140)" filter="url(#shadow)">
+    <rect width="480" height="315" rx="10" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.5"/>
+    <path d="M 0 10 Q 0 0 10 0 H 470 Q 480 0 480 10 V 48 H 0 Z" fill="#0284C7"/>
+    <text x="20" y="31" font-size="17" font-weight="bold" fill="#FFFFFF">users</text>
+    <text x="460" y="31" font-size="12" font-weight="600" fill="#E0F2FE" text-anchor="end">Core Entity</text>
+
+    <!-- Row: id -->
+    <g transform="translate(0, 48)">
+      <rect width="480" height="36" fill="#F8FAFC"/>
+      <rect x="18" y="9" width="28" height="18" rx="4" fill="#D97706"/>
+      <text x="32" y="22" font-size="10" font-weight="bold" fill="#FFFFFF" text-anchor="middle">PK</text>
+      <text x="58" y="23" font-size="13" font-weight="700" fill="#0F172A">id</text>
+      <text x="210" y="23" font-size="12" font-weight="600" fill="#0284C7">UUID</text>
+      <text x="460" y="23" font-size="11" fill="#64748B" text-anchor="end">DEFAULT gen_random_uuid()</text>
+      <line x1="18" y1="36" x2="462" y2="36" stroke="#E2E8F0" stroke-width="1"/>
+    </g>
+
+    <!-- Row: username -->
+    <g transform="translate(0, 84)">
+      <rect x="18" y="9" width="28" height="18" rx="4" fill="#7C3AED"/>
+      <text x="32" y="22" font-size="10" font-weight="bold" fill="#FFFFFF" text-anchor="middle">UK</text>
+      <text x="58" y="23" font-size="13" font-weight="700" fill="#0F172A">username</text>
+      <text x="210" y="23" font-size="12" font-weight="600" fill="#0284C7">VARCHAR(50)</text>
+      <text x="460" y="23" font-size="11" font-weight="600" fill="#DC2626" text-anchor="end">NOT NULL</text>
+      <line x1="18" y1="36" x2="462" y2="36" stroke="#E2E8F0" stroke-width="1"/>
+    </g>
+
+    <!-- Row: email -->
+    <g transform="translate(0, 120)">
+      <rect x="18" y="9" width="28" height="18" rx="4" fill="#7C3AED"/>
+      <text x="32" y="22" font-size="10" font-weight="bold" fill="#FFFFFF" text-anchor="middle">UK</text>
+      <text x="58" y="23" font-size="13" font-weight="700" fill="#0F172A">email</text>
+      <text x="210" y="23" font-size="12" font-weight="600" fill="#0284C7">VARCHAR(255)</text>
+      <text x="460" y="23" font-size="11" font-weight="600" fill="#DC2626" text-anchor="end">NOT NULL</text>
+      <line x1="18" y1="36" x2="462" y2="36" stroke="#E2E8F0" stroke-width="1"/>
+    </g>
+
+    <!-- Row: password_hash -->
+    <g transform="translate(0, 156)">
+      <text x="58" y="23" font-size="13" font-weight="600" fill="#334155">password_hash</text>
+      <text x="210" y="23" font-size="12" font-weight="600" fill="#0284C7">VARCHAR(255)</text>
+      <text x="460" y="23" font-size="11" font-weight="600" fill="#DC2626" text-anchor="end">NOT NULL</text>
+      <line x1="18" y1="36" x2="462" y2="36" stroke="#E2E8F0" stroke-width="1"/>
+    </g>
+
+    <!-- Row: created_at -->
+    <g transform="translate(0, 192)">
+      <text x="58" y="23" font-size="13" font-weight="500" fill="#475569">created_at</text>
+      <text x="210" y="23" font-size="12" font-weight="600" fill="#0284C7">TIMESTAMPTZ</text>
+      <text x="460" y="23" font-size="11" fill="#64748B" text-anchor="end">DEFAULT NOW()</text>
+      <line x1="18" y1="36" x2="462" y2="36" stroke="#E2E8F0" stroke-width="1"/>
+    </g>
+
+    <!-- Row: updated_at -->
+    <g transform="translate(0, 228)">
+      <text x="58" y="23" font-size="13" font-weight="500" fill="#475569">updated_at</text>
+      <text x="210" y="23" font-size="12" font-weight="600" fill="#0284C7">TIMESTAMPTZ</text>
+      <text x="460" y="23" font-size="11" fill="#64748B" text-anchor="end">DEFAULT NOW()</text>
+    </g>
+  </g>
+
+
+  <!-- ==================== TABLE 2: PROFILES (Left Top) ==================== -->
+  <g transform="translate(60, 140)" filter="url(#shadow)">
+    <rect width="460" height="315" rx="10" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.5"/>
+    <path d="M 0 10 Q 0 0 10 0 H 450 Q 460 0 460 10 V 48 H 0 Z" fill="#059669"/>
+    <text x="20" y="31" font-size="17" font-weight="bold" fill="#FFFFFF">profiles</text>
+    <text x="440" y="31" font-size="12" font-weight="600" fill="#D1FAE5" text-anchor="end">1:1 User Details</text>
+
+    <!-- Row: id -->
+    <g transform="translate(0, 48)">
+      <rect width="460" height="36" fill="#F8FAFC"/>
+      <rect x="18" y="9" width="28" height="18" rx="4" fill="#D97706"/>
+      <text x="32" y="22" font-size="10" font-weight="bold" fill="#FFFFFF" text-anchor="middle">PK</text>
+      <text x="58" y="23" font-size="13" font-weight="700" fill="#0F172A">id</text>
+      <text x="200" y="23" font-size="12" font-weight="600" fill="#059669">UUID</text>
+      <text x="440" y="23" font-size="11" fill="#64748B" text-anchor="end">DEFAULT gen_random_uuid()</text>
+      <line x1="18" y1="36" x2="442" y2="36" stroke="#E2E8F0" stroke-width="1"/>
+    </g>
+
+    <!-- Row: user_id -->
+    <g transform="translate(0, 84)">
+      <rect x="16" y="9" width="24" height="18" rx="4" fill="#0284C7"/>
+      <text x="28" y="22" font-size="9" font-weight="bold" fill="#FFFFFF" text-anchor="middle">FK</text>
+      <rect x="42" y="9" width="24" height="18" rx="4" fill="#7C3AED"/>
+      <text x="54" y="22" font-size="9" font-weight="bold" fill="#FFFFFF" text-anchor="middle">UK</text>
+      <text x="74" y="23" font-size="13" font-weight="700" fill="#0F172A">user_id</text>
+      <text x="200" y="23" font-size="12" font-weight="600" fill="#059669">UUID</text>
+      <text x="440" y="23" font-size="11" font-weight="600" fill="#D97706" text-anchor="end">users(id) [CASCADE]</text>
+      <line x1="18" y1="36" x2="442" y2="36" stroke="#E2E8F0" stroke-width="1"/>
+    </g>
+
+    <!-- Row: name -->
+    <g transform="translate(0, 120)">
+      <text x="58" y="23" font-size="13" font-weight="700" fill="#0F172A">name</text>
+      <text x="200" y="23" font-size="12" font-weight="600" fill="#059669">VARCHAR(100)</text>
+      <text x="440" y="23" font-size="11" font-weight="600" fill="#DC2626" text-anchor="end">NOT NULL</text>
+      <line x1="18" y1="36" x2="442" y2="36" stroke="#E2E8F0" stroke-width="1"/>
+    </g>
+
+    <!-- Row: bio -->
+    <g transform="translate(0, 156)">
+      <text x="58" y="23" font-size="13" font-weight="500" fill="#475569">bio</text>
+      <text x="200" y="23" font-size="12" font-weight="600" fill="#059669">TEXT</text>
+      <text x="440" y="23" font-size="11" fill="#64748B" text-anchor="end">NULLABLE</text>
+      <line x1="18" y1="36" x2="442" y2="36" stroke="#E2E8F0" stroke-width="1"/>
+    </g>
+
+    <!-- Row: created_at -->
+    <g transform="translate(0, 192)">
+      <text x="58" y="23" font-size="13" font-weight="500" fill="#475569">created_at</text>
+      <text x="200" y="23" font-size="12" font-weight="600" fill="#059669">TIMESTAMPTZ</text>
+      <text x="440" y="23" font-size="11" fill="#64748B" text-anchor="end">DEFAULT NOW()</text>
+      <line x1="18" y1="36" x2="442" y2="36" stroke="#E2E8F0" stroke-width="1"/>
+    </g>
+
+    <!-- Row: updated_at -->
+    <g transform="translate(0, 228)">
+      <text x="58" y="23" font-size="13" font-weight="500" fill="#475569">updated_at</text>
+      <text x="200" y="23" font-size="12" font-weight="600" fill="#059669">TIMESTAMPTZ</text>
+      <text x="440" y="23" font-size="11" fill="#64748B" text-anchor="end">DEFAULT NOW()</text>
+    </g>
+  </g>
+
+
+  <!-- ==================== TABLE 3: REFRESH_TOKENS (Right Top) ==================== -->
+  <g transform="translate(1360, 140)" filter="url(#shadow)">
+    <rect width="470" height="280" rx="10" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.5"/>
+    <path d="M 0 10 Q 0 0 10 0 H 460 Q 470 0 470 10 V 48 H 0 Z" fill="#7C3AED"/>
+    <text x="20" y="31" font-size="17" font-weight="bold" fill="#FFFFFF">refresh_tokens</text>
+    <text x="450" y="31" font-size="12" font-weight="600" fill="#EDE9FE" text-anchor="end">Auth Sessions</text>
+
+    <!-- Row: id -->
+    <g transform="translate(0, 48)">
+      <rect width="470" height="36" fill="#F8FAFC"/>
+      <rect x="18" y="9" width="28" height="18" rx="4" fill="#D97706"/>
+      <text x="32" y="22" font-size="10" font-weight="bold" fill="#FFFFFF" text-anchor="middle">PK</text>
+      <text x="58" y="23" font-size="13" font-weight="700" fill="#0F172A">id</text>
+      <text x="190" y="23" font-size="12" font-weight="600" fill="#7C3AED">UUID</text>
+      <text x="450" y="23" font-size="11" fill="#64748B" text-anchor="end">DEFAULT gen_random_uuid()</text>
+      <line x1="18" y1="36" x2="452" y2="36" stroke="#E2E8F0" stroke-width="1"/>
+    </g>
+
+    <!-- Row: user_id -->
+    <g transform="translate(0, 84)">
+      <rect x="18" y="9" width="28" height="18" rx="4" fill="#0284C7"/>
+      <text x="32" y="22" font-size="10" font-weight="bold" fill="#FFFFFF" text-anchor="middle">FK</text>
+      <text x="58" y="23" font-size="13" font-weight="700" fill="#0F172A">user_id</text>
+      <text x="190" y="23" font-size="12" font-weight="600" fill="#7C3AED">UUID</text>
+      <text x="450" y="23" font-size="11" font-weight="600" fill="#D97706" text-anchor="end">users(id) [CASCADE]</text>
+      <line x1="18" y1="36" x2="452" y2="36" stroke="#E2E8F0" stroke-width="1"/>
+    </g>
+
+    <!-- Row: token -->
+    <g transform="translate(0, 120)">
+      <rect x="18" y="9" width="28" height="18" rx="4" fill="#7C3AED"/>
+      <text x="32" y="22" font-size="10" font-weight="bold" fill="#FFFFFF" text-anchor="middle">UK</text>
+      <text x="58" y="23" font-size="13" font-weight="700" fill="#0F172A">token</text>
+      <text x="190" y="23" font-size="12" font-weight="600" fill="#7C3AED">TEXT</text>
+      <text x="450" y="23" font-size="11" font-weight="600" fill="#DC2626" text-anchor="end">NOT NULL</text>
+      <line x1="18" y1="36" x2="452" y2="36" stroke="#E2E8F0" stroke-width="1"/>
+    </g>
+
+    <!-- Row: expires_at -->
+    <g transform="translate(0, 156)">
+      <text x="58" y="23" font-size="13" font-weight="600" fill="#334155">expires_at</text>
+      <text x="190" y="23" font-size="12" font-weight="600" fill="#7C3AED">TIMESTAMPTZ</text>
+      <text x="450" y="23" font-size="11" font-weight="600" fill="#DC2626" text-anchor="end">NOT NULL</text>
+      <line x1="18" y1="36" x2="452" y2="36" stroke="#E2E8F0" stroke-width="1"/>
+    </g>
+
+    <!-- Row: created_at -->
+    <g transform="translate(0, 192)">
+      <text x="58" y="23" font-size="13" font-weight="500" fill="#475569">created_at</text>
+      <text x="190" y="23" font-size="12" font-weight="600" fill="#7C3AED">TIMESTAMPTZ</text>
+      <text x="450" y="23" font-size="11" fill="#64748B" text-anchor="end">DEFAULT NOW()</text>
+    </g>
+  </g>
+
+
+  <!-- ==================== TABLE 4: PROJECTS (Left Bottom) ==================== -->
+  <g transform="translate(60, 660)" filter="url(#shadow)">
+    <rect width="460" height="320" rx="10" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.5"/>
+    <path d="M 0 10 Q 0 0 10 0 H 450 Q 460 0 460 10 V 48 H 0 Z" fill="#D97706"/>
+    <text x="20" y="31" font-size="17" font-weight="bold" fill="#FFFFFF">projects</text>
+    <text x="440" y="31" font-size="12" font-weight="600" fill="#FEF3C7" text-anchor="end">Project Scope</text>
+
+    <!-- Row: id -->
+    <g transform="translate(0, 48)">
+      <rect width="460" height="36" fill="#F8FAFC"/>
+      <rect x="18" y="9" width="28" height="18" rx="4" fill="#D97706"/>
+      <text x="32" y="22" font-size="10" font-weight="bold" fill="#FFFFFF" text-anchor="middle">PK</text>
+      <text x="58" y="23" font-size="13" font-weight="700" fill="#0F172A">id</text>
+      <text x="190" y="23" font-size="12" font-weight="600" fill="#D97706">UUID</text>
+      <text x="440" y="23" font-size="11" fill="#64748B" text-anchor="end">DEFAULT gen_random_uuid()</text>
+      <line x1="18" y1="36" x2="442" y2="36" stroke="#E2E8F0" stroke-width="1"/>
+    </g>
+
+    <!-- Row: name -->
+    <g transform="translate(0, 84)">
+      <text x="58" y="23" font-size="13" font-weight="700" fill="#0F172A">name</text>
+      <text x="190" y="23" font-size="12" font-weight="600" fill="#D97706">VARCHAR(150)</text>
+      <text x="440" y="23" font-size="11" font-weight="600" fill="#DC2626" text-anchor="end">NOT NULL</text>
+      <line x1="18" y1="36" x2="442" y2="36" stroke="#E2E8F0" stroke-width="1"/>
+    </g>
+
+    <!-- Row: description -->
+    <g transform="translate(0, 120)">
+      <text x="58" y="23" font-size="13" font-weight="500" fill="#475569">description</text>
+      <text x="190" y="23" font-size="12" font-weight="600" fill="#D97706">TEXT</text>
+      <text x="440" y="23" font-size="11" fill="#64748B" text-anchor="end">NULLABLE</text>
+      <line x1="18" y1="36" x2="442" y2="36" stroke="#E2E8F0" stroke-width="1"/>
+    </g>
+
+    <!-- Row: created_by -->
+    <g transform="translate(0, 156)">
+      <rect x="18" y="9" width="28" height="18" rx="4" fill="#0284C7"/>
+      <text x="32" y="22" font-size="10" font-weight="bold" fill="#FFFFFF" text-anchor="middle">FK</text>
+      <text x="58" y="23" font-size="13" font-weight="700" fill="#0F172A">created_by</text>
+      <text x="190" y="23" font-size="12" font-weight="600" fill="#D97706">UUID</text>
+      <text x="440" y="23" font-size="11" font-weight="600" fill="#0284C7" text-anchor="end">users(id) [CASCADE]</text>
+      <line x1="18" y1="36" x2="442" y2="36" stroke="#E2E8F0" stroke-width="1"/>
+    </g>
+
+    <!-- Row: created_at -->
+    <g transform="translate(0, 192)">
+      <text x="58" y="23" font-size="13" font-weight="500" fill="#475569">created_at</text>
+      <text x="190" y="23" font-size="12" font-weight="600" fill="#D97706">TIMESTAMPTZ</text>
+      <text x="440" y="23" font-size="11" fill="#64748B" text-anchor="end">DEFAULT NOW()</text>
+      <line x1="18" y1="36" x2="442" y2="36" stroke="#E2E8F0" stroke-width="1"/>
+    </g>
+
+    <!-- Row: updated_at -->
+    <g transform="translate(0, 228)">
+      <text x="58" y="23" font-size="13" font-weight="500" fill="#475569">updated_at</text>
+      <text x="190" y="23" font-size="12" font-weight="600" fill="#D97706">TIMESTAMPTZ</text>
+      <text x="440" y="23" font-size="11" fill="#64748B" text-anchor="end">DEFAULT NOW()</text>
+    </g>
+  </g>
+
+
+  <!-- ==================== TABLE 5: PROJECT_MEMBERS (Center Bottom) ==================== -->
+  <g transform="translate(670, 660)" filter="url(#shadow)">
+    <rect width="480" height="320" rx="10" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.5"/>
+    <path d="M 0 10 Q 0 0 10 0 H 470 Q 480 0 480 10 V 48 H 0 Z" fill="#0D9488"/>
+    <text x="20" y="31" font-size="17" font-weight="bold" fill="#FFFFFF">project_members</text>
+    <text x="460" y="31" font-size="12" font-weight="600" fill="#CCFBF1" text-anchor="end">M:N Junction &amp; RBAC</text>
+
+    <!-- Row: id -->
+    <g transform="translate(0, 48)">
+      <rect width="480" height="36" fill="#F8FAFC"/>
+      <rect x="18" y="9" width="28" height="18" rx="4" fill="#D97706"/>
+      <text x="32" y="22" font-size="10" font-weight="bold" fill="#FFFFFF" text-anchor="middle">PK</text>
+      <text x="58" y="23" font-size="13" font-weight="700" fill="#0F172A">id</text>
+      <text x="180" y="23" font-size="12" font-weight="600" fill="#0D9488">UUID</text>
+      <text x="460" y="23" font-size="11" fill="#64748B" text-anchor="end">DEFAULT gen_random_uuid()</text>
+      <line x1="18" y1="36" x2="462" y2="36" stroke="#E2E8F0" stroke-width="1"/>
+    </g>
+
+    <!-- Row: project_id -->
+    <g transform="translate(0, 84)">
+      <rect x="18" y="9" width="28" height="18" rx="4" fill="#0284C7"/>
+      <text x="32" y="22" font-size="10" font-weight="bold" fill="#FFFFFF" text-anchor="middle">FK</text>
+      <text x="58" y="23" font-size="13" font-weight="700" fill="#0F172A">project_id</text>
+      <text x="180" y="23" font-size="12" font-weight="600" fill="#0D9488">UUID</text>
+      <text x="460" y="23" font-size="11" font-weight="600" fill="#D97706" text-anchor="end">projects(id) [CASCADE]</text>
+      <line x1="18" y1="36" x2="462" y2="36" stroke="#E2E8F0" stroke-width="1"/>
+    </g>
+
+    <!-- Row: user_id -->
+    <g transform="translate(0, 120)">
+      <rect x="18" y="9" width="28" height="18" rx="4" fill="#0284C7"/>
+      <text x="32" y="22" font-size="10" font-weight="bold" fill="#FFFFFF" text-anchor="middle">FK</text>
+      <text x="58" y="23" font-size="13" font-weight="700" fill="#0F172A">user_id</text>
+      <text x="180" y="23" font-size="12" font-weight="600" fill="#0D9488">UUID</text>
+      <text x="460" y="23" font-size="11" font-weight="600" fill="#0284C7" text-anchor="end">users(id) [CASCADE]</text>
+      <line x1="18" y1="36" x2="462" y2="36" stroke="#E2E8F0" stroke-width="1"/>
+    </g>
+
+    <!-- Row: role -->
+    <g transform="translate(0, 156)">
+      <rect x="18" y="9" width="34" height="18" rx="4" fill="#0D9488"/>
+      <text x="35" y="22" font-size="8.5" font-weight="bold" fill="#FFFFFF" text-anchor="middle">RBAC</text>
+      <text x="58" y="23" font-size="13" font-weight="700" fill="#0F172A">role</text>
+      <text x="180" y="23" font-size="12" font-weight="600" fill="#0D9488">ENUM('owner','member')</text>
+      <text x="460" y="23" font-size="11" fill="#64748B" text-anchor="end">DEFAULT 'member'</text>
+      <line x1="18" y1="36" x2="462" y2="36" stroke="#E2E8F0" stroke-width="1"/>
+    </g>
+
+    <!-- Row: joined_at -->
+    <g transform="translate(0, 192)">
+      <text x="58" y="23" font-size="13" font-weight="500" fill="#475569">joined_at</text>
+      <text x="180" y="23" font-size="12" font-weight="600" fill="#0D9488">TIMESTAMPTZ</text>
+      <text x="460" y="23" font-size="11" fill="#64748B" text-anchor="end">DEFAULT NOW()</text>
+      <line x1="18" y1="36" x2="462" y2="36" stroke="#E2E8F0" stroke-width="1"/>
+    </g>
+
+    <!-- Unique Constraint Badge -->
+    <g transform="translate(0, 240)">
+      <rect x="18" y="10" width="444" height="30" rx="6" fill="#F0FDFA" stroke="#0D9488" stroke-width="1.2"/>
+      <text x="240" y="30" font-size="12" font-weight="700" fill="#0D9488" text-anchor="middle">UNIQUE CONSTRAINT: (project_id, user_id)</text>
+    </g>
+  </g>
+
+
+  <!-- ==================== TABLE 6: TASKS (Right Bottom) ==================== -->
+  <g transform="translate(1360, 660)" filter="url(#shadow)">
+    <rect width="470" height="430" rx="10" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.5"/>
+    <path d="M 0 10 Q 0 0 10 0 H 460 Q 470 0 470 10 V 48 H 0 Z" fill="#E11D48"/>
+    <text x="20" y="31" font-size="17" font-weight="bold" fill="#FFFFFF">tasks</text>
+    <text x="450" y="31" font-size="12" font-weight="600" fill="#FFE4E6" text-anchor="end">Work Units</text>
+
+    <!-- Row: id -->
+    <g transform="translate(0, 48)">
+      <rect width="470" height="36" fill="#F8FAFC"/>
+      <rect x="18" y="9" width="28" height="18" rx="4" fill="#D97706"/>
+      <text x="32" y="22" font-size="10" font-weight="bold" fill="#FFFFFF" text-anchor="middle">PK</text>
+      <text x="58" y="23" font-size="13" font-weight="700" fill="#0F172A">id</text>
+      <text x="180" y="23" font-size="12" font-weight="600" fill="#E11D48">UUID</text>
+      <text x="450" y="23" font-size="11" fill="#64748B" text-anchor="end">DEFAULT gen_random_uuid()</text>
+      <line x1="18" y1="36" x2="452" y2="36" stroke="#E2E8F0" stroke-width="1"/>
+    </g>
+
+    <!-- Row: project_id -->
+    <g transform="translate(0, 84)">
+      <rect x="18" y="9" width="28" height="18" rx="4" fill="#0284C7"/>
+      <text x="32" y="22" font-size="10" font-weight="bold" fill="#FFFFFF" text-anchor="middle">FK</text>
+      <text x="58" y="23" font-size="13" font-weight="700" fill="#0F172A">project_id</text>
+      <text x="180" y="23" font-size="12" font-weight="600" fill="#E11D48">UUID</text>
+      <text x="450" y="23" font-size="11" font-weight="600" fill="#D97706" text-anchor="end">projects(id) [CASCADE]</text>
+      <line x1="18" y1="36" x2="452" y2="36" stroke="#E2E8F0" stroke-width="1"/>
+    </g>
+
+    <!-- Row: assigned_to -->
+    <g transform="translate(0, 120)">
+      <rect x="18" y="9" width="28" height="18" rx="4" fill="#0284C7"/>
+      <text x="32" y="22" font-size="10" font-weight="bold" fill="#FFFFFF" text-anchor="middle">FK</text>
+      <text x="58" y="23" font-size="13" font-weight="700" fill="#0F172A">assigned_to</text>
+      <text x="180" y="23" font-size="12" font-weight="600" fill="#E11D48">UUID</text>
+      <text x="450" y="23" font-size="11" font-weight="600" fill="#0284C7" text-anchor="end">users(id) [SET NULL]</text>
+      <line x1="18" y1="36" x2="452" y2="36" stroke="#E2E8F0" stroke-width="1"/>
+    </g>
+
+    <!-- Row: title -->
+    <g transform="translate(0, 156)">
+      <text x="58" y="23" font-size="13" font-weight="700" fill="#0F172A">title</text>
+      <text x="180" y="23" font-size="12" font-weight="600" fill="#E11D48">VARCHAR(200)</text>
+      <text x="450" y="23" font-size="11" font-weight="600" fill="#DC2626" text-anchor="end">NOT NULL</text>
+      <line x1="18" y1="36" x2="452" y2="36" stroke="#E2E8F0" stroke-width="1"/>
+    </g>
+
+    <!-- Row: description -->
+    <g transform="translate(0, 192)">
+      <text x="58" y="23" font-size="13" font-weight="500" fill="#475569">description</text>
+      <text x="180" y="23" font-size="12" font-weight="600" fill="#E11D48">TEXT</text>
+      <text x="450" y="23" font-size="11" fill="#64748B" text-anchor="end">NULLABLE</text>
+      <line x1="18" y1="36" x2="452" y2="36" stroke="#E2E8F0" stroke-width="1"/>
+    </g>
+
+    <!-- Row: priority -->
+    <g transform="translate(0, 228)">
+      <text x="58" y="23" font-size="13" font-weight="700" fill="#0F172A">priority</text>
+      <text x="180" y="23" font-size="12" font-weight="600" fill="#E11D48">ENUM('Low','Medium','High')</text>
+      <text x="450" y="23" font-size="11" fill="#64748B" text-anchor="end">DEFAULT 'Medium'</text>
+      <line x1="18" y1="36" x2="452" y2="36" stroke="#E2E8F0" stroke-width="1"/>
+    </g>
+
+    <!-- Row: status -->
+    <g transform="translate(0, 264)">
+      <text x="58" y="23" font-size="13" font-weight="700" fill="#0F172A">status</text>
+      <text x="180" y="23" font-size="12" font-weight="600" fill="#E11D48">ENUM('To Do','In progress','Done')</text>
+      <text x="450" y="23" font-size="11" fill="#64748B" text-anchor="end">DEFAULT 'To Do'</text>
+      <line x1="18" y1="36" x2="452" y2="36" stroke="#E2E8F0" stroke-width="1"/>
+    </g>
+
+    <!-- Row: created_at -->
+    <g transform="translate(0, 300)">
+      <text x="58" y="23" font-size="13" font-weight="500" fill="#475569">created_at</text>
+      <text x="180" y="23" font-size="12" font-weight="600" fill="#E11D48">TIMESTAMPTZ</text>
+      <text x="450" y="23" font-size="11" fill="#64748B" text-anchor="end">DEFAULT NOW()</text>
+      <line x1="18" y1="36" x2="452" y2="36" stroke="#E2E8F0" stroke-width="1"/>
+    </g>
+
+    <!-- Row: updated_at -->
+    <g transform="translate(0, 336)">
+      <text x="58" y="23" font-size="13" font-weight="500" fill="#475569">updated_at</text>
+      <text x="180" y="23" font-size="12" font-weight="600" fill="#E11D48">TIMESTAMPTZ</text>
+      <text x="450" y="23" font-size="11" fill="#64748B" text-anchor="end">DEFAULT NOW()</text>
+    </g>
+  </g>
+
+</svg>

@@ -1,0 +1,44 @@
+=============================================================================
+1. AUTHENTICATION & SESSIONS (/api/auth)
+=============================================================================
+POST   /api/auth/register          - Register new user (hashed password)
+POST   /api/auth/login             - Authenticate user, return Access Token + Refresh Token
+POST   /api/auth/refresh           - Issue new Access Token using Refresh Token
+POST   /api/auth/logout            - Invalidate/delete Refresh Token
+GET    /api/auth/me                - Get currently logged-in user details
+
+=============================================================================
+2. USER PROFILES (/api/profiles)
+=============================================================================
+GET    /api/profiles/me            - Get current user's profile
+PATCH  /api/profiles/me            - Update current user's profile (name, bio)
+GET    /api/profiles/:userId       - View another user's public profile
+
+=============================================================================
+3. PROJECTS (/api/projects)
+=============================================================================
+POST   /api/projects               - Create a new project (Current user becomes Owner)
+GET    /api/projects               - List projects current user owns or is a member of
+                                     (Query params: ?search=keyword&sortBy=created_at&order=asc|desc&page=1&limit=10)
+GET    /api/projects/:id           - Get single project details & member list (Owner or Member)
+PATCH  /api/projects/:id           - Update project name/description (Owner ONLY -> 403 for Member)
+DELETE /api/projects/:id           - Delete project & cascade tasks (Owner ONLY -> 403 for Member)
+
+=============================================================================
+4. PROJECT MEMBERSHIP (/api/projects/:id/members)
+=============================================================================
+GET    /api/projects/:id/members   - List all members of a project
+POST   /api/projects/:id/members   - Add a user to project as a Member (Owner ONLY)
+DELETE /api/projects/:id/members/:userId - Remove a user from project (Owner ONLY)
+
+=============================================================================
+5. TASKS (/api/tasks & /api/projects/:id/tasks)
+=============================================================================
+POST   /api/projects/:id/tasks     - Create a task inside a project (Owner ONLY; assignedTo must be project member)
+GET    /api/projects/:id/tasks     - List tasks of a project with Level 2 & 3 filtering/sorting:
+                                     (?status=Done&priority=High&assignedTo=uuid&search=keyword&sortBy=created_at&order=desc&page=1&limit=10)
+GET    /api/tasks/:id              - Get single task details
+PATCH  /api/tasks/:id              - Full update: title, description, priority, assignee (Owner ONLY)
+PATCH  /api/tasks/:id/status       - Update task status ONLY ('To Do' -> 'In progress' -> 'Done')
+                                     (Allowed for Owner OR assigned Member -> 403 if Member is not assigned)
+DELETE /api/tasks/:id              - Delete a task (Owner ONLY -> 403 for Member)

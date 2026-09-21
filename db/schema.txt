@@ -1,0 +1,49 @@
+User:
+    id: uuid PK
+    username: varchar(50) UNIQUE NOT NULL
+    email: varchar(255) UNIQUE NOT NULL
+    password_hash: varchar(255) NOT NULL
+    created_at: timestamp DEFAULT NOW()
+    updated_at: timestamp DEFAULT NOW()
+
+Profile:
+    id: uuid PK
+    user_id: uuid FK -> User(id) UNIQUE ON DELETE CASCADE ON UPDATE CASCADE
+    name: varchar(100) NOT NULL
+    bio: text NULL
+    created_at: timestamp DEFAULT NOW()
+    updated_at: timestamp DEFAULT NOW()
+
+Refresh_token:
+    id: uuid PK
+    user_id: uuid FK -> User(id) ON DELETE CASCADE ON UPDATE CASCADE
+    token: text UNIQUE NOT NULL
+    expires_at: timestamp NOT NULL
+    created_at: timestamp DEFAULT NOW()
+
+Project:
+    id: uuid PK
+    name: varchar(150) NOT NULL
+    description: text NULL
+    created_by: uuid FK -> User(id) ON DELETE CASCADE ON UPDATE CASCADE
+    created_at: timestamp DEFAULT NOW()
+    updated_at: timestamp DEFAULT NOW()
+
+Project_member:
+    id: uuid PK
+    project_id: uuid FK -> Project(id) ON DELETE CASCADE ON UPDATE CASCADE
+    user_id: uuid FK -> User(id) ON DELETE CASCADE ON UPDATE CASCADE
+    role: enum('owner', 'member') NOT NULL DEFAULT 'member'
+    joined_at: timestamp DEFAULT NOW()
+    CONSTRAINT: UNIQUE(project_id, user_id)
+
+Task:
+    id: uuid PK
+    project_id: uuid FK -> Project(id) ON DELETE CASCADE ON UPDATE CASCADE
+    assigned_to: uuid FK -> User(id) NULL ON DELETE SET NULL ON UPDATE CASCADE
+    title: varchar(200) NOT NULL
+    description: text NULL
+    priority: enum('Low', 'Medium', 'High') DEFAULT 'Medium' NOT NULL
+    status: enum('To Do', 'In progress', 'Done') DEFAULT 'To Do' NOT NULL
+    created_at: timestamp DEFAULT NOW()
+    updated_at: timestamp DEFAULT NOW()
