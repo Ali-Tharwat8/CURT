@@ -1,0 +1,28 @@
+import { Router } from "express";
+import { authController } from "@/controllers/auth.controller.js";
+import { authenticate } from "@/middleware/auth.middleware.js";
+import { validate } from "@/middleware/validate.middleware.js";
+import { authLimiter } from "@/middleware/rateLimit.middleware.js";
+import { registerSchema, loginSchema, refreshTokenSchema } from "@/validators/auth.validator.js";
+
+const router = Router();
+
+/**
+ * Public Authentication Routes (Guarded by authLimiter for brute-force defense)
+ */
+router.post("/register", authLimiter, validate(registerSchema), authController.register);
+router.post("/login", authLimiter, validate(loginSchema), authController.login);
+router.post("/refresh", validate(refreshTokenSchema), authController.refresh);
+
+/**
+ * Logout Route
+ * Invalidates refresh token session in DB and clears client cookies
+ */
+router.post("/logout", authController.logout);
+
+/**
+ * Protected Routes (Guarded by authenticate middleware)
+ */
+router.get("/me", authenticate, authController.getMe);
+
+export default router;
