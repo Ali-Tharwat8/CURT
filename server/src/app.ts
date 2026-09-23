@@ -11,10 +11,23 @@ import authRoutes from "@/routes/auth.routes.js";
 import projectRoutes from "@/routes/project.routes.js";
 import taskRoutes from "@/routes/task.routes.js";
 
+import { swaggerSpec, getSwaggerHtml } from "@/docs/swagger.js";
+
 const app = express();
 
-// 1. Security Headers (Helmet)
-app.use(helmet());
+// 1. Security Headers (Helmet with Swagger UI CDN allowances)
+app.use(
+    helmet({
+        contentSecurityPolicy: {
+            directives: {
+                defaultSrc: ["'self'"],
+                scriptSrc: ["'self'", "'unsafe-inline'", "https://unpkg.com"],
+                styleSrc: ["'self'", "'unsafe-inline'", "https://unpkg.com"],
+                imgSrc: ["'self'", "data:", "https://unpkg.com", "https://img.icons8.com"],
+            },
+        },
+    })
+);
 
 // 2. HTTP Request Logger (Morgan)
 app.use(httpLogger);
@@ -38,13 +51,27 @@ app.get("/", (req: Request, res: Response) => {
         success: true,
         message: "🏎️ CURT Racing Team Project Management API is live and operational!",
         timestamp: new Date().toISOString(),
+        documentation: "/api-docs",
         endpoints: {
+            docs: "/api-docs",
+            swaggerJson: "/swagger.json",
             health: "/api/health",
             auth: "/api/auth",
             projects: "/api/projects",
             tasks: "/api/tasks"
         }
     });
+});
+
+// Interactive Swagger UI & OpenAPI Specification
+app.get("/swagger.json", (req: Request, res: Response) => {
+    res.setHeader("Content-Type", "application/json");
+    res.status(200).json(swaggerSpec);
+});
+
+app.get(["/api-docs", "/swagger"], (req: Request, res: Response) => {
+    res.setHeader("Content-Type", "text/html");
+    res.status(200).send(getSwaggerHtml());
 });
 
 // Health Check Route

@@ -2,11 +2,13 @@
 ### Team Project Management System — Backend Assessment (Season 26-27)
 
 [![Live API](https://img.shields.io/badge/Live_API-curt--silk.vercel.app-brightgreen?style=for-the-badge&logo=vercel)](https://curt-silk.vercel.app/)
+[![Swagger Docs](https://img.shields.io/badge/Swagger_UI-OpenAPI_3.0-85EA2D?style=for-the-badge&logo=swagger)](https://curt-silk.vercel.app/api-docs)
 [![Health Check](https://img.shields.io/badge/Health_Check-UP-success?style=for-the-badge)](https://curt-silk.vercel.app/api/health)
 
 A modular RESTful backend built for **Cairo University Racing Team (Formula Student / FSAE®)** to coordinate engineering projects, manage subsystem tasks, and enforce strict role-based access control.
 
 * 🌐 **Live Cloud Deployment**: [https://curt-silk.vercel.app](https://curt-silk.vercel.app)
+* 📖 **Interactive Swagger UI**: [https://curt-silk.vercel.app/api-docs](https://curt-silk.vercel.app/api-docs)
 * 🩺 **Health Check**: [`https://curt-silk.vercel.app/api/health`](https://curt-silk.vercel.app/api/health)
 
 ---
