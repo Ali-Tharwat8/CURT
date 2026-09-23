@@ -1,0 +1,1261 @@
+{
+  "info": {
+    "_postman_id": "projects-api-collection-v2-complete",
+    "name": "02 - CURT Projects Collection",
+    "description": "Comprehensive, production-grade test suite for Project CRUD, RBAC Permissions, and Team Member Management in Cairo University Racing Team (CURT) ERP.\n\nSupports 1-click execution with seeded credentials (Karim Amr, Nour Tarek, Salma Mostafa) as well as automated CI/CD runs.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "protocolProfileBehavior": {
+    "disableCookies": true
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000",
+      "type": "string"
+    },
+    {
+      "key": "ownerEmail",
+      "value": "karim@curt.racing",
+      "type": "string"
+    },
+    {
+      "key": "ownerPassword",
+      "value": "CurtPassword123!",
+      "type": "string"
+    },
+    {
+      "key": "ownerToken",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "ownerUserId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "memberEmail",
+      "value": "nour@curt.racing",
+      "type": "string"
+    },
+    {
+      "key": "memberPassword",
+      "value": "CurtPassword123!",
+      "type": "string"
+    },
+    {
+      "key": "memberToken",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "memberUserId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "outsiderEmail",
+      "value": "salma@curt.racing",
+      "type": "string"
+    },
+    {
+      "key": "outsiderPassword",
+      "value": "CurtPassword123!",
+      "type": "string"
+    },
+    {
+      "key": "outsiderToken",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "outsiderUserId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "projectId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "projectName",
+      "value": "Formula Front Wing Aero Package 2026",
+      "type": "string"
+    },
+    {
+      "key": "dynamicOwnerUsername",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "dynamicOwnerEmail",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "dynamicMemberUsername",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "dynamicMemberEmail",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "01 - Authentication & Setup",
+      "description": "Log in with seeded team engineers or register fresh accounts. Sets ownerToken, memberToken, and outsiderToken automatically.",
+      "item": [
+        {
+          "name": "01 - Login as Seeded Project Owner (Karim Amr)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200 OK\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Owner credentials extracted and saved to collection variables\", function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.be.true;",
+                  "    pm.expect(jsonData.data).to.have.property(\"accessToken\");",
+                  "    pm.collectionVariables.set(\"ownerToken\", jsonData.data.accessToken);",
+                  "    pm.collectionVariables.set(\"ownerUserId\", jsonData.data.user.id);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"identifier\": \"{{ownerEmail}}\",\n    \"password\": \"{{ownerPassword}}\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "login"
+              ]
+            },
+            "description": "Logs in as seeded Aerodynamics Lead (Karim Amr) and saves ownerToken."
+          },
+          "response": []
+        },
+        {
+          "name": "02 - Login as Seeded Project Member (Nour Tarek)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200 OK\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Member credentials extracted and saved to collection variables\", function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.be.true;",
+                  "    pm.expect(jsonData.data).to.have.property(\"accessToken\");",
+                  "    pm.collectionVariables.set(\"memberToken\", jsonData.data.accessToken);",
+                  "    pm.collectionVariables.set(\"memberUserId\", jsonData.data.user.id);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"identifier\": \"{{memberEmail}}\",\n    \"password\": \"{{memberPassword}}\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "login"
+              ]
+            },
+            "description": "Logs in as seeded Chassis Engineer (Nour Tarek) and saves memberToken."
+          },
+          "response": []
+        },
+        {
+          "name": "03 - Login as Outsider (Salma Mostafa)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200 OK\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Outsider credentials extracted and saved to collection variables\", function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.be.true;",
+                  "    pm.expect(jsonData.data).to.have.property(\"accessToken\");",
+                  "    pm.collectionVariables.set(\"outsiderToken\", jsonData.data.accessToken);",
+                  "    pm.collectionVariables.set(\"outsiderUserId\", jsonData.data.user.id);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"identifier\": \"{{outsiderEmail}}\",\n    \"password\": \"{{outsiderPassword}}\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "login"
+              ]
+            },
+            "description": "Logs in as Vehicle Dynamics Engineer (Salma Mostafa), who is not a member of the test project."
+          },
+          "response": []
+        },
+        {
+          "name": "04 - (Optional) Register Dynamic Owner",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "const ts = Date.now();",
+                  "pm.collectionVariables.set('dynamicOwnerUsername', 'lead_' + ts);",
+                  "pm.collectionVariables.set('dynamicOwnerEmail', 'lead_' + ts + '@curt.racing');"
+                ],
+                "type": "text/javascript"
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Dynamic owner registered successfully\", function () {",
+                  "    pm.response.to.have.status(201);",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.collectionVariables.set(\"ownerToken\", jsonData.data.accessToken);",
+                  "    pm.collectionVariables.set(\"ownerUserId\", jsonData.data.user.id);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"username\": \"{{dynamicOwnerUsername}}\",\n    \"email\": \"{{dynamicOwnerEmail}}\",\n    \"password\": \"CurtPassword123!\",\n    \"name\": \"Dynamic Project Owner\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/register",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "register"
+              ]
+            },
+            "description": "Registers a fresh user dynamically if running in an empty / non-seeded database."
+          },
+          "response": []
+        },
+        {
+          "name": "05 - (Optional) Register Dynamic Member",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "const ts = Date.now();",
+                  "pm.collectionVariables.set('dynamicMemberUsername', 'engineer_' + ts);",
+                  "pm.collectionVariables.set('dynamicMemberEmail', 'engineer_' + ts + '@curt.racing');"
+                ],
+                "type": "text/javascript"
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Dynamic member registered successfully\", function () {",
+                  "    pm.response.to.have.status(201);",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.collectionVariables.set(\"memberToken\", jsonData.data.accessToken);",
+                  "    pm.collectionVariables.set(\"memberUserId\", jsonData.data.user.id);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"username\": \"{{dynamicMemberUsername}}\",\n    \"email\": \"{{dynamicMemberEmail}}\",\n    \"password\": \"CurtPassword123!\",\n    \"name\": \"Dynamic Team Member\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/register",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "register"
+              ]
+            },
+            "description": "Registers a second fresh member dynamically if running in an empty database."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "02 - Project CRUD Operations",
+      "description": "Core project management endpoints: creation, retrieval, listing with pagination, and updating metadata.",
+      "item": [
+        {
+          "name": "06 - Create Project (Owner)",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "// Auto-auth fallback if ownerToken is missing",
+                  "if (!pm.collectionVariables.get(\"ownerToken\")) {",
+                  "    pm.sendRequest({",
+                  "        url: pm.collectionVariables.get(\"baseUrl\") + \"/api/auth/login\",",
+                  "        method: \"POST\",",
+                  "        header: { \"Content-Type\": \"application/json\" },",
+                  "        body: {",
+                  "            mode: \"raw\",",
+                  "            raw: JSON.stringify({",
+                  "                identifier: pm.collectionVariables.get(\"ownerEmail\") || \"karim@curt.racing\",",
+                  "                password: pm.collectionVariables.get(\"ownerPassword\") || \"CurtPassword123!\"",
+                  "            })",
+                  "        }",
+                  "    }, function (err, res) {",
+                  "        if (!err && res.code === 200) {",
+                  "            const json = res.json();",
+                  "            pm.collectionVariables.set(\"ownerToken\", json.data.accessToken);",
+                  "            pm.collectionVariables.set(\"ownerUserId\", json.data.user.id);",
+                  "        }",
+                  "    });",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 201 Created\", function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "",
+                  "pm.test(\"Project created and ID saved to collection variables\", function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.be.true;",
+                  "    pm.expect(jsonData.data).to.have.property(\"id\");",
+                  "    pm.expect(jsonData.data.name).to.eql(pm.collectionVariables.get(\"projectName\"));",
+                  "    pm.collectionVariables.set(\"projectId\", jsonData.data.id);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{ownerToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"name\": \"{{projectName}}\",\n    \"description\": \"Multi-element carbon front wing optimization using CFD mesh refinement\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/projects",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "projects"
+              ]
+            },
+            "description": "Creates a new project and atomically registers creator as owner."
+          },
+          "response": []
+        },
+        {
+          "name": "07 - List My Projects (Owner)",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "if (!pm.collectionVariables.get(\"ownerToken\")) {",
+                  "    pm.sendRequest({",
+                  "        url: pm.collectionVariables.get(\"baseUrl\") + \"/api/auth/login\",",
+                  "        method: \"POST\",",
+                  "        header: { \"Content-Type\": \"application/json\" },",
+                  "        body: {",
+                  "            mode: \"raw\",",
+                  "            raw: JSON.stringify({",
+                  "                identifier: pm.collectionVariables.get(\"ownerEmail\") || \"karim@curt.racing\",",
+                  "                password: pm.collectionVariables.get(\"ownerPassword\") || \"CurtPassword123!\"",
+                  "            })",
+                  "        }",
+                  "    }, function (err, res) {",
+                  "        if (!err && res.code === 200) {",
+                  "            const json = res.json();",
+                  "            pm.collectionVariables.set(\"ownerToken\", json.data.accessToken);",
+                  "            pm.collectionVariables.set(\"ownerUserId\", json.data.user.id);",
+                  "        }",
+                  "    });",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200 OK\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Projects list contains pagination metadata and project items\", function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.be.true;",
+                  "    pm.expect(Array.isArray(jsonData.data)).to.be.true;",
+                  "    pm.expect(jsonData.pagination).to.have.property(\"page\");",
+                  "    pm.expect(jsonData.pagination).to.have.property(\"limit\");",
+                  "    pm.expect(jsonData.pagination).to.have.property(\"total\");",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{ownerToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/projects?page=1&limit=10&sortBy=created_at&order=desc",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "projects"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                },
+                {
+                  "key": "sortBy",
+                  "value": "created_at"
+                },
+                {
+                  "key": "order",
+                  "value": "desc"
+                }
+              ]
+            },
+            "description": "Lists all projects where the authenticated user is owner or member."
+          },
+          "response": []
+        },
+        {
+          "name": "08 - Get Project by ID (Owner)",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "if (!pm.collectionVariables.get(\"ownerToken\")) {",
+                  "    pm.sendRequest({",
+                  "        url: pm.collectionVariables.get(\"baseUrl\") + \"/api/auth/login\",",
+                  "        method: \"POST\",",
+                  "        header: { \"Content-Type\": \"application/json\" },",
+                  "        body: {",
+                  "            mode: \"raw\",",
+                  "            raw: JSON.stringify({",
+                  "                identifier: pm.collectionVariables.get(\"ownerEmail\") || \"karim@curt.racing\",",
+                  "                password: pm.collectionVariables.get(\"ownerPassword\") || \"CurtPassword123!\"",
+                  "            })",
+                  "        }",
+                  "    }, function (err, res) {",
+                  "        if (!err && res.code === 200) {",
+                  "            const json = res.json();",
+                  "            pm.collectionVariables.set(\"ownerToken\", json.data.accessToken);",
+                  "            pm.collectionVariables.set(\"ownerUserId\", json.data.user.id);",
+                  "        }",
+                  "    });",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200 OK\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Project details include creator, members list, and tasks summary\", function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.be.true;",
+                  "    pm.expect(jsonData.data.id).to.eql(pm.collectionVariables.get(\"projectId\"));",
+                  "    pm.expect(jsonData.data).to.have.property(\"creator\");",
+                  "    pm.expect(jsonData.data).to.have.property(\"members\");",
+                  "    pm.expect(jsonData.data).to.have.property(\"tasksSummary\");",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{ownerToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/projects/{{projectId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "projects",
+                "{{projectId}}"
+              ]
+            },
+            "description": "Retrieves comprehensive project record with creator and active members."
+          },
+          "response": []
+        },
+        {
+          "name": "09 - Update Project Name & Description (Owner)",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "if (!pm.collectionVariables.get(\"ownerToken\")) {",
+                  "    pm.sendRequest({",
+                  "        url: pm.collectionVariables.get(\"baseUrl\") + \"/api/auth/login\",",
+                  "        method: \"POST\",",
+                  "        header: { \"Content-Type\": \"application/json\" },",
+                  "        body: {",
+                  "            mode: \"raw\",",
+                  "            raw: JSON.stringify({",
+                  "                identifier: pm.collectionVariables.get(\"ownerEmail\") || \"karim@curt.racing\",",
+                  "                password: pm.collectionVariables.get(\"ownerPassword\") || \"CurtPassword123!\"",
+                  "            })",
+                  "        }",
+                  "    }, function (err, res) {",
+                  "        if (!err && res.code === 200) {",
+                  "            const json = res.json();",
+                  "            pm.collectionVariables.set(\"ownerToken\", json.data.accessToken);",
+                  "            pm.collectionVariables.set(\"ownerUserId\", json.data.user.id);",
+                  "        }",
+                  "    });",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200 OK\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Owner successfully updates project metadata\", function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.be.true;",
+                  "    pm.expect(jsonData.data.name).to.eql(\"Formula Front Wing Aero Package 2026 - Rev B\");",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{ownerToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"name\": \"Formula Front Wing Aero Package 2026 - Rev B\",\n    \"description\": \"Updated CFD wing strakes and endplate angles for high angle-of-attack\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/projects/{{projectId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "projects",
+                "{{projectId}}"
+              ]
+            },
+            "description": "Owner modifies project name and description."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "03 - Membership & RBAC Permissions",
+      "description": "Comprehensive role-based access control tests: member invitations, duplicate protection, outsider blocking, and member permission boundaries.",
+      "item": [
+        {
+          "name": "10 - Add Member to Project (Owner)",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "if (!pm.collectionVariables.get(\"ownerToken\")) {",
+                  "    pm.sendRequest({",
+                  "        url: pm.collectionVariables.get(\"baseUrl\") + \"/api/auth/login\",",
+                  "        method: \"POST\",",
+                  "        header: { \"Content-Type\": \"application/json\" },",
+                  "        body: {",
+                  "            mode: \"raw\",",
+                  "            raw: JSON.stringify({",
+                  "                identifier: pm.collectionVariables.get(\"ownerEmail\") || \"karim@curt.racing\",",
+                  "                password: pm.collectionVariables.get(\"ownerPassword\") || \"CurtPassword123!\"",
+                  "            })",
+                  "        }",
+                  "    }, function (err, res) {",
+                  "        if (!err && res.code === 200) {",
+                  "            const json = res.json();",
+                  "            pm.collectionVariables.set(\"ownerToken\", json.data.accessToken);",
+                  "            pm.collectionVariables.set(\"ownerUserId\", json.data.user.id);",
+                  "        }",
+                  "    });",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 201 Created\", function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "",
+                  "pm.test(\"Member added with 'member' role and correct userId\", function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.be.true;",
+                  "    pm.expect(jsonData.data.role).to.eql(\"member\");",
+                  "    pm.expect(jsonData.data.userId).to.eql(pm.collectionVariables.get(\"memberUserId\"));",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{ownerToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"userId\": \"{{memberUserId}}\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/projects/{{projectId}}/members",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "projects",
+                "{{projectId}}",
+                "members"
+              ]
+            },
+            "description": "Project owner invites Nour Tarek as a member."
+          },
+          "response": []
+        },
+        {
+          "name": "11 - Add Duplicate Member (Negative - 409 Conflict)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 409 Conflict\", function () {",
+                  "    pm.response.to.have.status(409);",
+                  "});",
+                  "",
+                  "pm.test(\"Server prevents duplicate membership insertion\", function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.be.false;",
+                  "    pm.expect(jsonData.error).to.eql(\"Conflict\");",
+                  "    pm.expect(jsonData.message).to.eql(\"User is already a member of this project\");",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{ownerToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"userId\": \"{{memberUserId}}\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/projects/{{projectId}}/members",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "projects",
+                "{{projectId}}",
+                "members"
+              ]
+            },
+            "description": "Asserts database unique constraint prevents duplicate project members."
+          },
+          "response": []
+        },
+        {
+          "name": "12 - List Projects as Member (Verify Role)",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "if (!pm.collectionVariables.get(\"memberToken\")) {",
+                  "    pm.sendRequest({",
+                  "        url: pm.collectionVariables.get(\"baseUrl\") + \"/api/auth/login\",",
+                  "        method: \"POST\",",
+                  "        header: { \"Content-Type\": \"application/json\" },",
+                  "        body: {",
+                  "            mode: \"raw\",",
+                  "            raw: JSON.stringify({",
+                  "                identifier: pm.collectionVariables.get(\"memberEmail\") || \"nour@curt.racing\",",
+                  "                password: pm.collectionVariables.get(\"memberPassword\") || \"CurtPassword123!\"",
+                  "            })",
+                  "        }",
+                  "    }, function (err, res) {",
+                  "        if (!err && res.code === 200) {",
+                  "            const json = res.json();",
+                  "            pm.collectionVariables.set(\"memberToken\", json.data.accessToken);",
+                  "            pm.collectionVariables.set(\"memberUserId\", json.data.user.id);",
+                  "        }",
+                  "    });",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200 OK\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Project appears in Member's project list with role 'member'\", function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.be.true;",
+                  "    const project = jsonData.data.find(p => p.id === pm.collectionVariables.get(\"projectId\"));",
+                  "    pm.expect(project).to.not.be.undefined;",
+                  "    pm.expect(project.role).to.eql(\"member\");",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{memberToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/projects",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "projects"
+              ]
+            },
+            "description": "Verifies that Member sees the newly assigned project in their personal roster."
+          },
+          "response": []
+        },
+        {
+          "name": "13 - Get Project as Outsider (Negative - 403 Forbidden)",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "if (!pm.collectionVariables.get(\"outsiderToken\")) {",
+                  "    pm.sendRequest({",
+                  "        url: pm.collectionVariables.get(\"baseUrl\") + \"/api/auth/login\",",
+                  "        method: \"POST\",",
+                  "        header: { \"Content-Type\": \"application/json\" },",
+                  "        body: {",
+                  "            mode: \"raw\",",
+                  "            raw: JSON.stringify({",
+                  "                identifier: pm.collectionVariables.get(\"outsiderEmail\") || \"salma@curt.racing\",",
+                  "                password: pm.collectionVariables.get(\"outsiderPassword\") || \"CurtPassword123!\"",
+                  "            })",
+                  "        }",
+                  "    }, function (err, res) {",
+                  "        if (!err && res.code === 200) {",
+                  "            const json = res.json();",
+                  "            pm.collectionVariables.set(\"outsiderToken\", json.data.accessToken);",
+                  "            pm.collectionVariables.set(\"outsiderUserId\", json.data.user.id);",
+                  "        }",
+                  "    });",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 403 Forbidden\", function () {",
+                  "    pm.response.to.have.status(403);",
+                  "});",
+                  "",
+                  "pm.test(\"Outsider is blocked by requireMembership middleware\", function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.be.false;",
+                  "    pm.expect(jsonData.error).to.eql(\"Forbidden\");",
+                  "    pm.expect(jsonData.message).to.eql(\"You do not have access to this project\");",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{outsiderToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/projects/{{projectId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "projects",
+                "{{projectId}}"
+              ]
+            },
+            "description": "Asserts that non-members cannot read project details."
+          },
+          "response": []
+        },
+        {
+          "name": "14 - Update Project as Member (Negative - 403 Forbidden)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 403 Forbidden\", function () {",
+                  "    pm.response.to.have.status(403);",
+                  "});",
+                  "",
+                  "pm.test(\"Member is denied owner-only update action\", function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.be.false;",
+                  "    pm.expect(jsonData.error).to.eql(\"Forbidden\");",
+                  "    pm.expect(jsonData.message).to.eql(\"Access denied: Requires owner permissions for this action\");",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{memberToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"name\": \"Unauthorized Member Project Update\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/projects/{{projectId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "projects",
+                "{{projectId}}"
+              ]
+            },
+            "description": "Asserts that regular members cannot modify project properties."
+          },
+          "response": []
+        },
+        {
+          "name": "15 - Prevent Removing Owner from Project (Negative - 400 Bad Request)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 400 Bad Request\", function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "",
+                  "pm.test(\"Server prevents removing the project owner from their own project\", function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.be.false;",
+                  "    pm.expect(jsonData.message).to.eql(\"Cannot remove the project owner from the project\");",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{ownerToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/projects/{{projectId}}/members/{{ownerUserId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "projects",
+                "{{projectId}}",
+                "members",
+                "{{ownerUserId}}"
+              ]
+            },
+            "description": "Guarantees project owner cannot be stripped of membership."
+          },
+          "response": []
+        },
+        {
+          "name": "16 - Remove Member from Project (Owner - 200 OK)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200 OK\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Member successfully removed from project\", function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.be.true;",
+                  "    pm.expect(jsonData.message).to.eql(\"Member removed from project successfully\");",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{ownerToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/projects/{{projectId}}/members/{{memberUserId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "projects",
+                "{{projectId}}",
+                "members",
+                "{{memberUserId}}"
+              ]
+            },
+            "description": "Owner removes Member B from the project."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "04 - Cleanup & Teardown",
+      "description": "Final teardown of test projects to guarantee database stays pristine.",
+      "item": [
+        {
+          "name": "17 - Delete Test Project (Owner - 200 OK)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200 OK\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Project deleted successfully via CASCADE\", function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.be.true;",
+                  "    pm.expect(jsonData.message).to.eql(\"Project deleted successfully\");",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{ownerToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/projects/{{projectId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "projects",
+                "{{projectId}}"
+              ]
+            },
+            "description": "Deletes the project created during testing, cascading to project members and tasks."
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}
