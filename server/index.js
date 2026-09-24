@@ -524,6 +524,37 @@ var AuthService = class {
       profile: user.profile
     };
   }
+  /**
+   * 6. Update user profile details (name, bio)
+   */
+  async updateProfile(userId, input) {
+    const user = await db.query.users.findFirst({
+      where: eq(users.id, userId),
+      with: { profile: true }
+    });
+    if (!user) {
+      throw AppError.notFound("User not found");
+    }
+    const updateData = {
+      updatedAt: /* @__PURE__ */ new Date()
+    };
+    if (input.name !== void 0) {
+      updateData.name = input.name;
+    }
+    if (input.bio !== void 0) {
+      updateData.bio = input.bio;
+    }
+    if (user.profile) {
+      await db.update(profiles).set(updateData).where(eq(profiles.userId, userId));
+    } else {
+      await db.insert(profiles).values({
+        userId,
+        name: input.name || user.username,
+        bio: input.bio || null
+      });
+    }
+    return this.getCurrentUser(userId);
+  }
 };
 var authService = new AuthService();
 
@@ -628,7 +659,7 @@ var AuthController = class {
     });
   });
   /**
-   * GET /api/auth/me
+   * GET /api/auth/me (or /api/auth/profile)
    * Returns authenticated user profile (req.user attached by authMiddleware)
    */
   getMe = catchAsync(async (req, res) => {
@@ -638,6 +669,21 @@ var AuthController = class {
     const user = await authService.getCurrentUser(req.user.id);
     res.status(200).json({
       success: true,
+      data: user
+    });
+  });
+  /**
+   * PUT /api/auth/profile
+   * Update authenticated user profile details (name, bio)
+   */
+  updateProfile = catchAsync(async (req, res) => {
+    if (!req.user) {
+      throw AppError.unauthorized("Authentication required");
+    }
+    const user = await authService.updateProfile(req.user.id, req.body);
+    res.status(200).json({
+      success: true,
+      message: "Profile updated successfully",
       data: user
     });
   });
@@ -712,6 +758,16 @@ var refreshTokenSchema = z.object({
   refreshToken: z.string().trim().optional()
 });
 
+// src/validators/profile.validator.ts
+import { z as z2 } from "zod";
+var updateProfileSchema = z2.object({
+  name: z2.string().trim().min(2, "Name must be at least 2 characters").max(100, "Name must not exceed 100 characters").optional(),
+  bio: z2.string().trim().max(500, "Bio must not exceed 500 characters").optional()
+});
+var profileParamsSchema = z2.object({
+  userId: z2.string().uuid("Invalid user ID format (UUID expected)")
+});
+
 // src/routes/auth.routes.ts
 var router = Router();
 router.post("/register", authLimiter, validate(registerSchema), authController.register);
@@ -719,6 +775,9 @@ router.post("/login", authLimiter, validate(loginSchema), authController.login);
 router.post("/refresh", validate(refreshTokenSchema), authController.refresh);
 router.post("/logout", authController.logout);
 router.get("/me", authenticate, authController.getMe);
+router.get("/profile", authenticate, authController.getMe);
+router.put("/profile", authenticate, validate(updateProfileSchema), authController.updateProfile);
+router.patch("/profile", authenticate, validate(updateProfileSchema), authController.updateProfile);
 var auth_routes_default = router;
 
 // src/routes/project.routes.ts
@@ -750,10 +809,10 @@ var ProjectService = class {
    * Supports search by name, sorting, and pagination
    */
   async getUserProjects(userId, query) {
-    const { page = 1, limit = 10, search, sortBy = "created_at", order = "desc" } = query;
+    const { role, page = 1, limit = 10, search, sortBy = "created_at", order = "desc" } = query;
     const offset = (page - 1) * limit;
     const userMemberships = await db.query.projectMembers.findMany({
-      where: (pm, { eq: eq4 }) => eq4(pm.userId, userId),
+      where: (pm, { eq: eq4, and: and3 }) => role ? and3(eq4(pm.userId, userId), eq4(pm.role, role)) : eq4(pm.userId, userId),
       columns: { projectId: true, role: true }
     });
     if (userMemberships.length === 0) {
@@ -946,6 +1005,99 @@ var ProjectService = class {
     await db.delete(projectMembers).where(and(eq2(projectMembers.projectId, projectId), eq2(projectMembers.userId, targetUserId)));
     return { message: "Member removed from project successfully" };
   }
+  /**
+   * 8. List all members belonging to a project
+   */
+  async getProjectMembers(projectId) {
+    const project = await db.query.projects.findFirst({
+      where: (p, { eq: eq4 }) => eq4(p.id, projectId)
+    });
+    if (!project) {
+      throw AppError.notFound("Project not found");
+    }
+    const members = await db.query.projectMembers.findMany({
+      where: (pm, { eq: eq4 }) => eq4(pm.projectId, projectId),
+      orderBy: (pm, { asc: asc3 }) => asc3(pm.joinedAt),
+      with: {
+        user: {
+          columns: { id: true, username: true, email: true },
+          with: { profile: true }
+        }
+      }
+    });
+    return members.map((m) => ({
+      membershipId: m.id,
+      userId: m.user.id,
+      username: m.user.username,
+      email: m.user.email,
+      name: m.user.profile?.name || m.user.username,
+      bio: m.user.profile?.bio || null,
+      role: m.role,
+      joinedAt: m.joinedAt
+    }));
+  }
+  /**
+   * 9. Get detailed project progress, completion rates, and task statistics
+   */
+  async getProjectProgress(projectId) {
+    const project = await db.query.projects.findFirst({
+      where: (p, { eq: eq4 }) => eq4(p.id, projectId),
+      with: {
+        tasks: {
+          with: {
+            assignee: {
+              columns: { id: true, username: true },
+              with: { profile: { columns: { name: true } } }
+            }
+          }
+        },
+        members: {
+          with: {
+            user: {
+              columns: { id: true, username: true },
+              with: { profile: { columns: { name: true } } }
+            }
+          }
+        }
+      }
+    });
+    if (!project) {
+      throw AppError.notFound("Project not found");
+    }
+    const totalTasks = project.tasks.length;
+    const doneTasks = project.tasks.filter((t) => t.status === "Done").length;
+    const inProgressTasks = project.tasks.filter((t) => t.status === "In progress").length;
+    const todoTasks = project.tasks.filter((t) => t.status === "To Do").length;
+    const completionPercentage = totalTasks === 0 ? 0 : Math.round(doneTasks / totalTasks * 100);
+    const priorityStats = {
+      high: project.tasks.filter((t) => t.priority === "High").length,
+      medium: project.tasks.filter((t) => t.priority === "Medium").length,
+      low: project.tasks.filter((t) => t.priority === "Low").length
+    };
+    const memberProgress = project.members.map((m) => {
+      const memberTasks = project.tasks.filter((t) => t.assignedTo === m.userId);
+      const memberDone = memberTasks.filter((t) => t.status === "Done").length;
+      return {
+        userId: m.userId,
+        username: m.user.username,
+        name: m.user.profile?.name || m.user.username,
+        role: m.role,
+        assignedTasksCount: memberTasks.length,
+        completedTasksCount: memberDone
+      };
+    });
+    return {
+      projectId: project.id,
+      projectName: project.name,
+      totalTasks,
+      completedTasks: doneTasks,
+      inProgressTasks,
+      todoTasks,
+      completionPercentage,
+      priorityStats,
+      memberProgress
+    };
+  }
 };
 var projectService = new ProjectService();
 
@@ -1041,6 +1193,28 @@ var ProjectController = class {
       message: result.message
     });
   });
+  /**
+   * GET /api/projects/:id/members
+   * List all members of a project (Owner & Members)
+   */
+  getMembers = catchAsync(async (req, res) => {
+    const members = await projectService.getProjectMembers(req.params.id);
+    res.status(200).json({
+      success: true,
+      data: members
+    });
+  });
+  /**
+   * GET /api/projects/:id/progress
+   * View project completion rate and task statistics (Owner & Members)
+   */
+  getProgress = catchAsync(async (req, res) => {
+    const progress = await projectService.getProjectProgress(req.params.id);
+    res.status(200).json({
+      success: true,
+      data: progress
+    });
+  });
 };
 var projectController = new ProjectController();
 
@@ -1088,34 +1262,35 @@ var restrictTo = (...allowedRoles) => {
 };
 
 // src/validators/project.validator.ts
-import { z as z2 } from "zod";
-var createProjectSchema = z2.object({
-  name: z2.string().trim().min(2, "Project name must be at least 2 characters").max(150, "Project name must not exceed 150 characters"),
-  description: z2.string().trim().max(1e3, "Description must not exceed 1000 characters").optional()
+import { z as z3 } from "zod";
+var createProjectSchema = z3.object({
+  name: z3.string().trim().min(2, "Project name must be at least 2 characters").max(150, "Project name must not exceed 150 characters"),
+  description: z3.string().trim().max(1e3, "Description must not exceed 1000 characters").optional()
 });
-var updateProjectSchema = z2.object({
-  name: z2.string().trim().min(2, "Project name must be at least 2 characters").max(150, "Project name must not exceed 150 characters").optional(),
-  description: z2.string().trim().max(1e3, "Description must not exceed 1000 characters").optional()
+var updateProjectSchema = z3.object({
+  name: z3.string().trim().min(2, "Project name must be at least 2 characters").max(150, "Project name must not exceed 150 characters").optional(),
+  description: z3.string().trim().max(1e3, "Description must not exceed 1000 characters").optional()
 }).refine(
   (data) => data.name !== void 0 || data.description !== void 0,
   "At least one field (name or description) must be provided for update"
 );
-var projectParamsSchema = z2.object({
-  id: z2.string().uuid("Invalid project ID format (UUID expected)")
+var projectParamsSchema = z3.object({
+  id: z3.string().uuid("Invalid project ID format (UUID expected)")
 });
-var addMemberSchema = z2.object({
-  userId: z2.string().uuid("Invalid user ID format (UUID expected)")
+var addMemberSchema = z3.object({
+  userId: z3.string().uuid("Invalid user ID format (UUID expected)")
 });
-var memberParamsSchema = z2.object({
-  id: z2.string().uuid("Invalid project ID format (UUID expected)"),
-  userId: z2.string().uuid("Invalid user ID format (UUID expected)")
+var memberParamsSchema = z3.object({
+  id: z3.string().uuid("Invalid project ID format (UUID expected)"),
+  userId: z3.string().uuid("Invalid user ID format (UUID expected)")
 });
-var listProjectsQuerySchema = z2.object({
-  search: z2.string().trim().optional(),
-  sortBy: z2.enum(["created_at", "name"]).default("created_at"),
-  order: z2.enum(["asc", "desc"]).default("desc"),
-  page: z2.coerce.number().int().min(1, "Page must be at least 1").default(1),
-  limit: z2.coerce.number().int().min(1).max(50, "Limit cannot exceed 50").default(10)
+var listProjectsQuerySchema = z3.object({
+  role: z3.enum(["owner", "member"]).optional(),
+  search: z3.string().trim().optional(),
+  sortBy: z3.enum(["created_at", "name"]).default("created_at"),
+  order: z3.enum(["asc", "desc"]).default("desc"),
+  page: z3.coerce.number().int().min(1, "Page must be at least 1").default(1),
+  limit: z3.coerce.number().int().min(1).max(50, "Limit cannot exceed 50").default(10)
 });
 
 // src/services/task.service.ts
@@ -1368,6 +1543,102 @@ var TaskService = class {
     await db.delete(tasks).where(eq3(tasks.id, taskId));
     return { message: "Task deleted successfully" };
   }
+  /**
+   * 7. List all tasks assigned to the currently authenticated user across projects
+   */
+  async getMyTasks(userId, query) {
+    const {
+      page = 1,
+      limit = 10,
+      status,
+      priority,
+      search,
+      sortBy = "created_at",
+      order = "desc"
+    } = query;
+    const offset = (page - 1) * limit;
+    const conditions = [eq3(tasks.assignedTo, userId)];
+    if (status) {
+      conditions.push(eq3(tasks.status, status));
+    }
+    if (priority) {
+      conditions.push(eq3(tasks.priority, priority));
+    }
+    if (search) {
+      conditions.push(ilike2(tasks.title, `%${search}%`));
+    }
+    const whereClause = and2(...conditions);
+    const [{ count: totalCount }] = await db.select({ count: count2() }).from(tasks).where(whereClause);
+    const total = Number(totalCount);
+    const totalPages = Math.ceil(total / limit);
+    const orderColumn = sortBy === "priority" ? tasks.priority : sortBy === "status" ? tasks.status : tasks.createdAt;
+    const orderByClause = order === "asc" ? asc2(orderColumn) : desc2(orderColumn);
+    const taskList = await db.query.tasks.findMany({
+      where: whereClause,
+      orderBy: orderByClause,
+      limit,
+      offset,
+      with: {
+        project: {
+          columns: { id: true, name: true }
+        }
+      }
+    });
+    const formatted = taskList.map((t) => ({
+      id: t.id,
+      projectId: t.projectId,
+      projectName: t.project.name,
+      title: t.title,
+      description: t.description,
+      priority: t.priority,
+      status: t.status,
+      createdAt: t.createdAt,
+      updatedAt: t.updatedAt
+    }));
+    return {
+      tasks: formatted,
+      pagination: { page, limit, total, totalPages }
+    };
+  }
+  /**
+   * 8. Assign or unassign a task to a project member (Owner only)
+   */
+  async assignTask(taskId, userId, targetAssigneeId) {
+    const task = await db.query.tasks.findFirst({
+      where: (t, { eq: eq4 }) => eq4(t.id, taskId)
+    });
+    if (!task) {
+      throw AppError.notFound("Task not found");
+    }
+    const membership = await db.query.projectMembers.findFirst({
+      where: (pm, { and: and3, eq: eq4 }) => and3(
+        eq4(pm.projectId, task.projectId),
+        eq4(pm.userId, userId)
+      )
+    });
+    if (!membership) {
+      throw AppError.forbidden("You do not have access to this project");
+    }
+    if (membership.role !== "owner") {
+      throw AppError.forbidden("Only the project owner can assign or unassign tasks");
+    }
+    if (targetAssigneeId) {
+      const isMember = await db.query.projectMembers.findFirst({
+        where: (pm, { and: and3, eq: eq4 }) => and3(
+          eq4(pm.projectId, task.projectId),
+          eq4(pm.userId, targetAssigneeId)
+        )
+      });
+      if (!isMember) {
+        throw AppError.badRequest("Assignee must be an active member of this project");
+      }
+    }
+    const [updated] = await db.update(tasks).set({
+      assignedTo: targetAssigneeId,
+      updatedAt: /* @__PURE__ */ new Date()
+    }).where(eq3(tasks.id, taskId)).returning();
+    return this.getById(updated.id, userId);
+  }
 };
 var taskService = new TaskService();
 
@@ -1466,42 +1737,88 @@ var TaskController = class {
       message: result.message
     });
   });
+  /**
+   * GET /api/tasks/my
+   * List all tasks assigned to the currently authenticated user
+   */
+  getMyTasks = catchAsync(async (req, res) => {
+    if (!req.user) {
+      throw AppError.unauthorized("Authentication required");
+    }
+    const result = await taskService.getMyTasks(req.user.id, req.query);
+    res.status(200).json({
+      success: true,
+      data: result.tasks,
+      pagination: result.pagination
+    });
+  });
+  /**
+   * PATCH /api/tasks/:id/assign
+   * Assign or unassign task to a member of the project (Owner only)
+   */
+  assign = catchAsync(async (req, res) => {
+    if (!req.user) {
+      throw AppError.unauthorized("Authentication required");
+    }
+    const task = await taskService.assignTask(
+      req.params.id,
+      req.user.id,
+      req.body.assignedTo ?? null
+    );
+    res.status(200).json({
+      success: true,
+      message: req.body.assignedTo ? "Task assigned successfully" : "Task unassigned successfully",
+      data: task
+    });
+  });
 };
 var taskController = new TaskController();
 
 // src/validators/task.validator.ts
-import { z as z3 } from "zod";
-var createTaskSchema = z3.object({
-  title: z3.string().trim().min(1, "Task title cannot be empty").max(200, "Task title must not exceed 200 characters"),
-  description: z3.string().trim().max(2e3, "Description must not exceed 2000 characters").optional(),
-  priority: z3.enum(["Low", "Medium", "High"]).default("Medium"),
-  status: z3.enum(["To Do", "In progress", "Done"]).default("To Do"),
-  assignedTo: z3.string().uuid("Invalid assignee ID format (UUID expected)").optional()
+import { z as z4 } from "zod";
+var createTaskSchema = z4.object({
+  title: z4.string().trim().min(1, "Task title cannot be empty").max(200, "Task title must not exceed 200 characters"),
+  description: z4.string().trim().max(2e3, "Description must not exceed 2000 characters").optional(),
+  priority: z4.enum(["Low", "Medium", "High"]).default("Medium"),
+  status: z4.enum(["To Do", "In progress", "Done"]).default("To Do"),
+  assignedTo: z4.string().uuid("Invalid assignee ID format (UUID expected)").optional()
 });
-var updateTaskSchema = z3.object({
-  title: z3.string().trim().min(1, "Task title cannot be empty").max(200, "Task title must not exceed 200 characters").optional(),
-  description: z3.string().trim().max(2e3, "Description must not exceed 2000 characters").optional(),
-  priority: z3.enum(["Low", "Medium", "High"]).optional(),
-  assignedTo: z3.string().uuid("Invalid assignee ID format (UUID expected)").nullable().optional()
+var updateTaskSchema = z4.object({
+  title: z4.string().trim().min(1, "Task title cannot be empty").max(200, "Task title must not exceed 200 characters").optional(),
+  description: z4.string().trim().max(2e3, "Description must not exceed 2000 characters").optional(),
+  priority: z4.enum(["Low", "Medium", "High"]).optional(),
+  assignedTo: z4.string().uuid("Invalid assignee ID format (UUID expected)").nullable().optional()
 }).refine(
   (data) => data.title !== void 0 || data.description !== void 0 || data.priority !== void 0 || data.assignedTo !== void 0,
   "At least one field must be provided for task update"
 );
-var updateTaskStatusSchema = z3.object({
-  status: z3.enum(["To Do", "In progress", "Done"])
+var updateTaskStatusSchema = z4.object({
+  status: z4.enum(["To Do", "In progress", "Done"])
 });
-var taskParamsSchema = z3.object({
-  id: z3.string().uuid("Invalid task ID format (UUID expected)")
+var assignTaskSchema = z4.object({
+  assignedTo: z4.string().uuid("Invalid assignee ID format (UUID expected)").nullable()
 });
-var listTasksQuerySchema = z3.object({
-  status: z3.enum(["To Do", "In progress", "Done"]).optional(),
-  priority: z3.enum(["Low", "Medium", "High"]).optional(),
-  assignedTo: z3.string().uuid("Invalid assignee ID format (UUID expected)").optional(),
-  search: z3.string().trim().optional(),
-  sortBy: z3.enum(["created_at", "priority", "status"]).default("created_at"),
-  order: z3.enum(["asc", "desc"]).default("desc"),
-  page: z3.coerce.number().int().min(1, "Page must be at least 1").default(1),
-  limit: z3.coerce.number().int().min(1).max(50, "Limit cannot exceed 50").default(10)
+var taskParamsSchema = z4.object({
+  id: z4.string().uuid("Invalid task ID format (UUID expected)")
+});
+var listTasksQuerySchema = z4.object({
+  status: z4.enum(["To Do", "In progress", "Done"]).optional(),
+  priority: z4.enum(["Low", "Medium", "High"]).optional(),
+  assignedTo: z4.string().uuid("Invalid assignee ID format (UUID expected)").optional(),
+  search: z4.string().trim().optional(),
+  sortBy: z4.enum(["created_at", "priority", "status"]).default("created_at"),
+  order: z4.enum(["asc", "desc"]).default("desc"),
+  page: z4.coerce.number().int().min(1, "Page must be at least 1").default(1),
+  limit: z4.coerce.number().int().min(1).max(50, "Limit cannot exceed 50").default(10)
+});
+var listMyTasksQuerySchema = z4.object({
+  status: z4.enum(["To Do", "In progress", "Done"]).optional(),
+  priority: z4.enum(["Low", "Medium", "High"]).optional(),
+  search: z4.string().trim().optional(),
+  sortBy: z4.enum(["created_at", "priority", "status"]).default("created_at"),
+  order: z4.enum(["asc", "desc"]).default("desc"),
+  page: z4.coerce.number().int().min(1, "Page must be at least 1").default(1),
+  limit: z4.coerce.number().int().min(1).max(50, "Limit cannot exceed 50").default(10)
 });
 
 // src/routes/project.routes.ts
@@ -1517,11 +1834,25 @@ router2.get(
   validate({ query: listProjectsQuerySchema }),
   projectController.list
 );
+router2.get("/owned", (req, res, next) => {
+  req.query.role = "owner";
+  projectController.list(req, res, next);
+});
+router2.get("/member", (req, res, next) => {
+  req.query.role = "member";
+  projectController.list(req, res, next);
+});
 router2.get(
   "/:id",
   validate({ params: projectParamsSchema }),
   requireMembership,
   projectController.getById
+);
+router2.get(
+  "/:id/progress",
+  validate({ params: projectParamsSchema }),
+  requireMembership,
+  projectController.getProgress
 );
 router2.put(
   "/:id",
@@ -1536,6 +1867,12 @@ router2.delete(
   requireMembership,
   restrictTo("owner"),
   projectController.delete
+);
+router2.get(
+  "/:id/members",
+  validate({ params: projectParamsSchema }),
+  requireMembership,
+  projectController.getMembers
 );
 router2.post(
   "/:id/members",
@@ -1571,6 +1908,11 @@ import { Router as Router3 } from "express";
 var router3 = Router3();
 router3.use(authenticate);
 router3.get(
+  "/my",
+  validate({ query: listMyTasksQuerySchema }),
+  taskController.getMyTasks
+);
+router3.get(
   "/:id",
   validate({ params: taskParamsSchema }),
   taskController.getById
@@ -1584,6 +1926,11 @@ router3.patch(
   "/:id/status",
   validate({ params: taskParamsSchema, body: updateTaskStatusSchema }),
   taskController.updateStatus
+);
+router3.patch(
+  "/:id/assign",
+  validate({ params: taskParamsSchema, body: assignTaskSchema }),
+  taskController.assign
 );
 router3.delete(
   "/:id",
@@ -1744,6 +2091,51 @@ var swaggerSpec = {
         }
       }
     },
+    "/api/auth/profile": {
+      get: {
+        tags: ["Auth"],
+        summary: "Get Authenticated User Profile",
+        description: "Returns authenticated engineer account details and profile information.",
+        security: [{ BearerAuth: [] }],
+        responses: {
+          "200": {
+            description: "Profile retrieved successfully",
+            content: {
+              "application/json": {
+                schema: { $ref: "#/components/schemas/UserProfileResponse" }
+              }
+            }
+          },
+          "401": { $ref: "#/components/responses/UnauthorizedError" }
+        }
+      },
+      put: {
+        tags: ["Auth"],
+        summary: "Update User Profile",
+        description: "Updates the authenticated engineer's name and bio in the profile table.",
+        security: [{ BearerAuth: [] }],
+        requestBody: {
+          required: true,
+          content: {
+            "application/json": {
+              schema: { $ref: "#/components/schemas/UpdateProfileRequest" }
+            }
+          }
+        },
+        responses: {
+          "200": {
+            description: "Profile updated successfully",
+            content: {
+              "application/json": {
+                schema: { $ref: "#/components/schemas/UserProfileResponse" }
+              }
+            }
+          },
+          "400": { $ref: "#/components/responses/ValidationError" },
+          "401": { $ref: "#/components/responses/UnauthorizedError" }
+        }
+      }
+    },
     "/api/projects": {
       post: {
         tags: ["Projects"],
@@ -1777,6 +2169,7 @@ var swaggerSpec = {
         description: "Lists all projects where the user is an Owner or Member. Supports pagination, sorting, and search.",
         security: [{ BearerAuth: [] }],
         parameters: [
+          { name: "role", in: "query", schema: { type: "string", enum: ["owner", "member"] }, description: "Filter projects where user is owner or member" },
           { name: "page", in: "query", schema: { type: "integer", default: 1 } },
           { name: "limit", in: "query", schema: { type: "integer", default: 10 } },
           { name: "search", in: "query", schema: { type: "string" } },
@@ -1866,7 +2259,49 @@ var swaggerSpec = {
         }
       }
     },
+    "/api/projects/{id}/progress": {
+      get: {
+        tags: ["Projects"],
+        summary: "Get Project Progress & Metrics",
+        description: "Calculates overall completion percentage, task breakdown by status and priority, and engineer workload distribution. Accessible by Owner and Members.",
+        security: [{ BearerAuth: [] }],
+        parameters: [{ name: "id", in: "path", required: true, schema: { type: "string", format: "uuid" } }],
+        responses: {
+          "200": {
+            description: "Project progress retrieved successfully",
+            content: {
+              "application/json": {
+                schema: { $ref: "#/components/schemas/ProjectProgressResponse" }
+              }
+            }
+          },
+          "401": { $ref: "#/components/responses/UnauthorizedError" },
+          "403": { $ref: "#/components/responses/ForbiddenError" },
+          "404": { $ref: "#/components/responses/NotFoundError" }
+        }
+      }
+    },
     "/api/projects/{id}/members": {
+      get: {
+        tags: ["Members"],
+        summary: "List Project Members",
+        description: "Returns all engineers and their roles (owner or member) in the project. Accessible by Owner and Members.",
+        security: [{ BearerAuth: [] }],
+        parameters: [{ name: "id", in: "path", required: true, schema: { type: "string", format: "uuid" } }],
+        responses: {
+          "200": {
+            description: "Project members list retrieved",
+            content: {
+              "application/json": {
+                schema: { $ref: "#/components/schemas/ProjectMembersResponse" }
+              }
+            }
+          },
+          "401": { $ref: "#/components/responses/UnauthorizedError" },
+          "403": { $ref: "#/components/responses/ForbiddenError" },
+          "404": { $ref: "#/components/responses/NotFoundError" }
+        }
+      },
       post: {
         tags: ["Members"],
         summary: "Add Member to Project (Owner Only)",
@@ -1981,6 +2416,34 @@ var swaggerSpec = {
         }
       }
     },
+    "/api/tasks/my": {
+      get: {
+        tags: ["Tasks"],
+        summary: "List My Assigned Tasks",
+        description: "Returns all tasks assigned to the currently authenticated engineer across all projects. Supports status/priority filtering, search, and pagination.",
+        security: [{ BearerAuth: [] }],
+        parameters: [
+          { name: "status", in: "query", schema: { type: "string", enum: ["To Do", "In progress", "Done"] } },
+          { name: "priority", in: "query", schema: { type: "string", enum: ["Low", "Medium", "High"] } },
+          { name: "search", in: "query", schema: { type: "string" } },
+          { name: "sortBy", in: "query", schema: { type: "string", enum: ["created_at", "priority", "status"], default: "created_at" } },
+          { name: "order", in: "query", schema: { type: "string", enum: ["asc", "desc"], default: "desc" } },
+          { name: "page", in: "query", schema: { type: "integer", default: 1 } },
+          { name: "limit", in: "query", schema: { type: "integer", default: 10 } }
+        ],
+        responses: {
+          "200": {
+            description: "My tasks retrieved successfully",
+            content: {
+              "application/json": {
+                schema: { $ref: "#/components/schemas/PaginatedTasksResponse" }
+              }
+            }
+          },
+          "401": { $ref: "#/components/responses/UnauthorizedError" }
+        }
+      }
+    },
     "/api/tasks/{id}": {
       get: {
         tags: ["Tasks"],
@@ -2082,6 +2545,37 @@ var swaggerSpec = {
           "404": { $ref: "#/components/responses/NotFoundError" }
         }
       }
+    },
+    "/api/tasks/{id}/assign": {
+      patch: {
+        tags: ["Tasks"],
+        summary: "Assign or Unassign Task (Owner Only)",
+        description: "Assigns a task to an active project member, or unassigns it by passing assignedTo as null. Only the project owner can assign tasks.",
+        security: [{ BearerAuth: [] }],
+        parameters: [{ name: "id", in: "path", required: true, schema: { type: "string", format: "uuid" } }],
+        requestBody: {
+          required: true,
+          content: {
+            "application/json": {
+              schema: { $ref: "#/components/schemas/AssignTaskRequest" }
+            }
+          }
+        },
+        responses: {
+          "200": {
+            description: "Task assigned/unassigned successfully",
+            content: {
+              "application/json": {
+                schema: { $ref: "#/components/schemas/TaskResponse" }
+              }
+            }
+          },
+          "400": { $ref: "#/components/responses/ValidationError" },
+          "401": { $ref: "#/components/responses/UnauthorizedError" },
+          "403": { $ref: "#/components/responses/ForbiddenError" },
+          "404": { $ref: "#/components/responses/NotFoundError" }
+        }
+      }
     }
   },
   components: {
@@ -2160,6 +2654,13 @@ var swaggerSpec = {
           refreshToken: { type: "string", example: "curt_refresh_token_karim_active_sample_2027" }
         }
       },
+      UpdateProfileRequest: {
+        type: "object",
+        properties: {
+          name: { type: "string", example: "Karim Amr", minLength: 2, maxLength: 100 },
+          bio: { type: "string", example: "Aerodynamics Lead Engineer | FSAE Season 26-27", maxLength: 500 }
+        }
+      },
       CreateProjectRequest: {
         type: "object",
         required: ["name"],
@@ -2207,6 +2708,19 @@ var swaggerSpec = {
         required: ["status"],
         properties: {
           status: { type: "string", enum: ["To Do", "In progress", "Done"], example: "In progress" }
+        }
+      },
+      AssignTaskRequest: {
+        type: "object",
+        required: ["assignedTo"],
+        properties: {
+          assignedTo: {
+            type: "string",
+            format: "uuid",
+            nullable: true,
+            example: "e1f2a3b4-c5d6-4e7f-8a9b-0c1d2e3f4a5b",
+            description: "Target project member UUID, or null to unassign"
+          }
         }
       },
       UserViewModel: {
@@ -2432,6 +2946,68 @@ var swaggerSpec = {
               limit: { type: "integer", example: 10 },
               total: { type: "integer", example: 4 },
               totalPages: { type: "integer", example: 1 }
+            }
+          }
+        }
+      },
+      ProjectProgressResponse: {
+        type: "object",
+        properties: {
+          success: { type: "boolean", example: true },
+          data: {
+            type: "object",
+            properties: {
+              projectId: { type: "string", format: "uuid" },
+              projectName: { type: "string", example: "Front Wing Ground Effect" },
+              totalTasks: { type: "integer", example: 12 },
+              completedTasks: { type: "integer", example: 8 },
+              inProgressTasks: { type: "integer", example: 3 },
+              todoTasks: { type: "integer", example: 1 },
+              completionPercentage: { type: "integer", example: 67 },
+              priorityStats: {
+                type: "object",
+                properties: {
+                  high: { type: "integer", example: 4 },
+                  medium: { type: "integer", example: 6 },
+                  low: { type: "integer", example: 2 }
+                }
+              },
+              memberProgress: {
+                type: "array",
+                items: {
+                  type: "object",
+                  properties: {
+                    userId: { type: "string", format: "uuid" },
+                    username: { type: "string", example: "karim_amr" },
+                    name: { type: "string", example: "Karim Amr" },
+                    role: { type: "string", example: "owner" },
+                    assignedTasksCount: { type: "integer", example: 5 },
+                    completedTasksCount: { type: "integer", example: 4 }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      ProjectMembersResponse: {
+        type: "object",
+        properties: {
+          success: { type: "boolean", example: true },
+          data: {
+            type: "array",
+            items: {
+              type: "object",
+              properties: {
+                membershipId: { type: "string", format: "uuid" },
+                userId: { type: "string", format: "uuid" },
+                username: { type: "string", example: "karim_amr" },
+                email: { type: "string", format: "email", example: "karim@curt.racing" },
+                name: { type: "string", example: "Karim Amr" },
+                bio: { type: "string", nullable: true, example: "Aerodynamics Lead" },
+                role: { type: "string", enum: ["owner", "member"], example: "owner" },
+                joinedAt: { type: "string", format: "date-time" }
+              }
             }
           }
         }

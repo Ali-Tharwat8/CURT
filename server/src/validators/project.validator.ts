@@ -46,6 +46,7 @@ export const memberParamsSchema = z.object({
 });
 
 export const listProjectsQuerySchema = z.object({
+  role: z.enum(["owner", "member"] as const).optional(),
   search: z.string().trim().optional(),
   sortBy: z.enum(["created_at", "name"] as const).default("created_at"),
   order: z.enum(["asc", "desc"] as const).default("desc"),

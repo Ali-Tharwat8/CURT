@@ -11,6 +11,7 @@ import {
 } from "@/utils/jwt.js";
 import { jwtConfig } from "@/config/jwt.js";
 import { RegisterInput, LoginInput } from "@/validators/auth.validator.js";
+import { UpdateProfileInput } from "@/validators/profile.validator.js";
 
 export class AuthService {
     /**
@@ -203,6 +204,47 @@ export class AuthService {
             email: user.email,
             profile: user.profile,
         };
+    }
+
+    /**
+     * 6. Update user profile details (name, bio)
+     */
+    async updateProfile(userId: string, input: UpdateProfileInput) {
+        const user = await db.query.users.findFirst({
+            where: eq(users.id, userId),
+            with: { profile: true },
+        });
+
+        if (!user) {
+            throw AppError.notFound("User not found");
+        }
+
+        const updateData: Record<string, any> = {
+            updatedAt: new Date(),
+        };
+
+        if (input.name !== undefined) {
+            updateData.name = input.name;
+        }
+
+        if (input.bio !== undefined) {
+            updateData.bio = input.bio;
+        }
+
+        if (user.profile) {
+            await db
+                .update(profiles)
+                .set(updateData)
+                .where(eq(profiles.userId, userId));
+        } else {
+            await db.insert(profiles).values({
+                userId,
+                name: input.name || user.username,
+                bio: input.bio || null,
+            });
+        }
+
+        return this.getCurrentUser(userId);
     }
 }
 

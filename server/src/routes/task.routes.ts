@@ -6,6 +6,8 @@ import {
     taskParamsSchema,
     updateTaskSchema,
     updateTaskStatusSchema,
+    listMyTasksQuerySchema,
+    assignTaskSchema,
 } from "@/validators/task.validator.js";
 
 const router = Router();
@@ -14,7 +16,18 @@ const router = Router();
 router.use(authenticate);
 
 /**
- * 1. GET /api/tasks/:id
+ * 1. GET /api/tasks/my
+ * Retrieve all tasks assigned to currently authenticated engineer across all projects
+ * NOTE: Must be defined before /:id to prevent route shadowing
+ */
+router.get(
+    "/my",
+    validate({ query: listMyTasksQuerySchema }),
+    taskController.getMyTasks
+);
+
+/**
+ * 2. GET /api/tasks/:id
  * Retrieve single task with relations (Members/Owner of that project)
  */
 router.get(
@@ -24,7 +37,7 @@ router.get(
 );
 
 /**
- * 2. PUT /api/tasks/:id
+ * 3. PUT /api/tasks/:id
  * Update task metadata (Owner only)
  */
 router.put(
@@ -34,13 +47,23 @@ router.put(
 );
 
 /**
- * 3. PATCH /api/tasks/:id/status
+ * 4. PATCH /api/tasks/:id/status
  * Update task status (Owner or Assigned Member)
  */
 router.patch(
     "/:id/status",
     validate({ params: taskParamsSchema, body: updateTaskStatusSchema }),
     taskController.updateStatus
+);
+
+/**
+ * 5. PATCH /api/tasks/:id/assign
+ * Assign or unassign task to a project member (Owner only)
+ */
+router.patch(
+    "/:id/assign",
+    validate({ params: taskParamsSchema, body: assignTaskSchema }),
+    taskController.assign
 );
 
 /**

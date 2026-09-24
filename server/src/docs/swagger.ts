@@ -149,6 +149,51 @@ export const swaggerSpec = {
         }
       }
     },
+    "/api/auth/profile": {
+      get: {
+        tags: ["Auth"],
+        summary: "Get Authenticated User Profile",
+        description: "Returns authenticated engineer account details and profile information.",
+        security: [{ BearerAuth: [] }],
+        responses: {
+          "200": {
+            description: "Profile retrieved successfully",
+            content: {
+              "application/json": {
+                schema: { $ref: "#/components/schemas/UserProfileResponse" }
+              }
+            }
+          },
+          "401": { $ref: "#/components/responses/UnauthorizedError" }
+        }
+      },
+      put: {
+        tags: ["Auth"],
+        summary: "Update User Profile",
+        description: "Updates the authenticated engineer's name and bio in the profile table.",
+        security: [{ BearerAuth: [] }],
+        requestBody: {
+          required: true,
+          content: {
+            "application/json": {
+              schema: { $ref: "#/components/schemas/UpdateProfileRequest" }
+            }
+          }
+        },
+        responses: {
+          "200": {
+            description: "Profile updated successfully",
+            content: {
+              "application/json": {
+                schema: { $ref: "#/components/schemas/UserProfileResponse" }
+              }
+            }
+          },
+          "400": { $ref: "#/components/responses/ValidationError" },
+          "401": { $ref: "#/components/responses/UnauthorizedError" }
+        }
+      }
+    },
     "/api/projects": {
       post: {
         tags: ["Projects"],
@@ -182,6 +227,7 @@ export const swaggerSpec = {
         description: "Lists all projects where the user is an Owner or Member. Supports pagination, sorting, and search.",
         security: [{ BearerAuth: [] }],
         parameters: [
+          { name: "role", in: "query", schema: { type: "string", enum: ["owner", "member"] }, description: "Filter projects where user is owner or member" },
           { name: "page", in: "query", schema: { type: "integer", default: 1 } },
           { name: "limit", in: "query", schema: { type: "integer", default: 10 } },
           { name: "search", in: "query", schema: { type: "string" } },
@@ -271,7 +317,49 @@ export const swaggerSpec = {
         }
       }
     },
+    "/api/projects/{id}/progress": {
+      get: {
+        tags: ["Projects"],
+        summary: "Get Project Progress & Metrics",
+        description: "Calculates overall completion percentage, task breakdown by status and priority, and engineer workload distribution. Accessible by Owner and Members.",
+        security: [{ BearerAuth: [] }],
+        parameters: [{ name: "id", in: "path", required: true, schema: { type: "string", format: "uuid" } }],
+        responses: {
+          "200": {
+            description: "Project progress retrieved successfully",
+            content: {
+              "application/json": {
+                schema: { $ref: "#/components/schemas/ProjectProgressResponse" }
+              }
+            }
+          },
+          "401": { $ref: "#/components/responses/UnauthorizedError" },
+          "403": { $ref: "#/components/responses/ForbiddenError" },
+          "404": { $ref: "#/components/responses/NotFoundError" }
+        }
+      }
+    },
     "/api/projects/{id}/members": {
+      get: {
+        tags: ["Members"],
+        summary: "List Project Members",
+        description: "Returns all engineers and their roles (owner or member) in the project. Accessible by Owner and Members.",
+        security: [{ BearerAuth: [] }],
+        parameters: [{ name: "id", in: "path", required: true, schema: { type: "string", format: "uuid" } }],
+        responses: {
+          "200": {
+            description: "Project members list retrieved",
+            content: {
+              "application/json": {
+                schema: { $ref: "#/components/schemas/ProjectMembersResponse" }
+              }
+            }
+          },
+          "401": { $ref: "#/components/responses/UnauthorizedError" },
+          "403": { $ref: "#/components/responses/ForbiddenError" },
+          "404": { $ref: "#/components/responses/NotFoundError" }
+        }
+      },
       post: {
         tags: ["Members"],
         summary: "Add Member to Project (Owner Only)",
@@ -386,6 +474,34 @@ export const swaggerSpec = {
         }
       }
     },
+    "/api/tasks/my": {
+      get: {
+        tags: ["Tasks"],
+        summary: "List My Assigned Tasks",
+        description: "Returns all tasks assigned to the currently authenticated engineer across all projects. Supports status/priority filtering, search, and pagination.",
+        security: [{ BearerAuth: [] }],
+        parameters: [
+          { name: "status", in: "query", schema: { type: "string", enum: ["To Do", "In progress", "Done"] } },
+          { name: "priority", in: "query", schema: { type: "string", enum: ["Low", "Medium", "High"] } },
+          { name: "search", in: "query", schema: { type: "string" } },
+          { name: "sortBy", in: "query", schema: { type: "string", enum: ["created_at", "priority", "status"], default: "created_at" } },
+          { name: "order", in: "query", schema: { type: "string", enum: ["asc", "desc"], default: "desc" } },
+          { name: "page", in: "query", schema: { type: "integer", default: 1 } },
+          { name: "limit", in: "query", schema: { type: "integer", default: 10 } }
+        ],
+        responses: {
+          "200": {
+            description: "My tasks retrieved successfully",
+            content: {
+              "application/json": {
+                schema: { $ref: "#/components/schemas/PaginatedTasksResponse" }
+              }
+            }
+          },
+          "401": { $ref: "#/components/responses/UnauthorizedError" }
+        }
+      }
+    },
     "/api/tasks/{id}": {
       get: {
         tags: ["Tasks"],
@@ -487,7 +603,38 @@ export const swaggerSpec = {
           "404": { $ref: "#/components/responses/NotFoundError" }
         }
       }
-    }
+    },
+    "/api/tasks/{id}/assign": {
+      patch: {
+        tags: ["Tasks"],
+        summary: "Assign or Unassign Task (Owner Only)",
+        description: "Assigns a task to an active project member, or unassigns it by passing assignedTo as null. Only the project owner can assign tasks.",
+        security: [{ BearerAuth: [] }],
+        parameters: [{ name: "id", in: "path", required: true, schema: { type: "string", format: "uuid" } }],
+        requestBody: {
+          required: true,
+          content: {
+            "application/json": {
+              schema: { $ref: "#/components/schemas/AssignTaskRequest" }
+            }
+          }
+        },
+        responses: {
+          "200": {
+            description: "Task assigned/unassigned successfully",
+            content: {
+              "application/json": {
+                schema: { $ref: "#/components/schemas/TaskResponse" }
+              }
+            }
+          },
+          "400": { $ref: "#/components/responses/ValidationError" },
+          "401": { $ref: "#/components/responses/UnauthorizedError" },
+          "403": { $ref: "#/components/responses/ForbiddenError" },
+          "404": { $ref: "#/components/responses/NotFoundError" }
+        }
+      }
+    },
   },
   components: {
     securitySchemes: {
@@ -565,6 +712,13 @@ export const swaggerSpec = {
           refreshToken: { type: "string", example: "curt_refresh_token_karim_active_sample_2027" }
         }
       },
+      UpdateProfileRequest: {
+        type: "object",
+        properties: {
+          name: { type: "string", example: "Karim Amr", minLength: 2, maxLength: 100 },
+          bio: { type: "string", example: "Aerodynamics Lead Engineer | FSAE Season 26-27", maxLength: 500 }
+        }
+      },
       CreateProjectRequest: {
         type: "object",
         required: ["name"],
@@ -612,6 +766,19 @@ export const swaggerSpec = {
         required: ["status"],
         properties: {
           status: { type: "string", enum: ["To Do", "In progress", "Done"], example: "In progress" }
+        }
+      },
+      AssignTaskRequest: {
+        type: "object",
+        required: ["assignedTo"],
+        properties: {
+          assignedTo: {
+            type: "string",
+            format: "uuid",
+            nullable: true,
+            example: "e1f2a3b4-c5d6-4e7f-8a9b-0c1d2e3f4a5b",
+            description: "Target project member UUID, or null to unassign"
+          }
         }
       },
       UserViewModel: {
@@ -837,6 +1004,68 @@ export const swaggerSpec = {
               limit: { type: "integer", example: 10 },
               total: { type: "integer", example: 4 },
               totalPages: { type: "integer", example: 1 }
+            }
+          }
+        }
+      },
+      ProjectProgressResponse: {
+        type: "object",
+        properties: {
+          success: { type: "boolean", example: true },
+          data: {
+            type: "object",
+            properties: {
+              projectId: { type: "string", format: "uuid" },
+              projectName: { type: "string", example: "Front Wing Ground Effect" },
+              totalTasks: { type: "integer", example: 12 },
+              completedTasks: { type: "integer", example: 8 },
+              inProgressTasks: { type: "integer", example: 3 },
+              todoTasks: { type: "integer", example: 1 },
+              completionPercentage: { type: "integer", example: 67 },
+              priorityStats: {
+                type: "object",
+                properties: {
+                  high: { type: "integer", example: 4 },
+                  medium: { type: "integer", example: 6 },
+                  low: { type: "integer", example: 2 }
+                }
+              },
+              memberProgress: {
+                type: "array",
+                items: {
+                  type: "object",
+                  properties: {
+                    userId: { type: "string", format: "uuid" },
+                    username: { type: "string", example: "karim_amr" },
+                    name: { type: "string", example: "Karim Amr" },
+                    role: { type: "string", example: "owner" },
+                    assignedTasksCount: { type: "integer", example: 5 },
+                    completedTasksCount: { type: "integer", example: 4 }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      ProjectMembersResponse: {
+        type: "object",
+        properties: {
+          success: { type: "boolean", example: true },
+          data: {
+            type: "array",
+            items: {
+              type: "object",
+              properties: {
+                membershipId: { type: "string", format: "uuid" },
+                userId: { type: "string", format: "uuid" },
+                username: { type: "string", example: "karim_amr" },
+                email: { type: "string", format: "email", example: "karim@curt.racing" },
+                name: { type: "string", example: "Karim Amr" },
+                bio: { type: "string", nullable: true, example: "Aerodynamics Lead" },
+                role: { type: "string", enum: ["owner", "member"], example: "owner" },
+                joinedAt: { type: "string", format: "date-time" }
+              }
             }
           }
         }

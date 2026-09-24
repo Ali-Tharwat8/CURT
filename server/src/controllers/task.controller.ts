@@ -112,6 +112,48 @@ export class TaskController {
             message: result.message,
         });
     });
+
+    /**
+     * GET /api/tasks/my
+     * List all tasks assigned to the currently authenticated user
+     */
+    getMyTasks = catchAsync(async (req: Request, res: Response) => {
+        if (!req.user) {
+            throw AppError.unauthorized("Authentication required");
+        }
+
+        const result = await taskService.getMyTasks(req.user.id, req.query as any);
+
+        res.status(200).json({
+            success: true,
+            data: result.tasks,
+            pagination: result.pagination,
+        });
+    });
+
+    /**
+     * PATCH /api/tasks/:id/assign
+     * Assign or unassign task to a member of the project (Owner only)
+     */
+    assign = catchAsync(async (req: Request, res: Response) => {
+        if (!req.user) {
+            throw AppError.unauthorized("Authentication required");
+        }
+
+        const task = await taskService.assignTask(
+            req.params.id as string,
+            req.user.id,
+            req.body.assignedTo ?? null
+        );
+
+        res.status(200).json({
+            success: true,
+            message: req.body.assignedTo
+                ? "Task assigned successfully"
+                : "Task unassigned successfully",
+            data: task,
+        });
+    });
 }
 
 export const taskController = new TaskController();

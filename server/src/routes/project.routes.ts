@@ -38,6 +38,17 @@ router.get(
     projectController.list
 );
 
+// Convenience routes for filtering projects by role (placed before /:id)
+router.get("/owned", (req, res, next) => {
+    req.query.role = "owner";
+    projectController.list(req, res, next);
+});
+
+router.get("/member", (req, res, next) => {
+    req.query.role = "member";
+    projectController.list(req, res, next);
+});
+
 /**
  * 2. Individual Project Routes
  */
@@ -46,6 +57,14 @@ router.get(
     validate({ params: projectParamsSchema }),
     requireMembership,
     projectController.getById
+);
+
+// Get project completion progress & statistics
+router.get(
+    "/:id/progress",
+    validate({ params: projectParamsSchema }),
+    requireMembership,
+    projectController.getProgress
 );
 
 router.put(
@@ -65,8 +84,17 @@ router.delete(
 );
 
 /**
- * 3. Member Management Routes (Owner Only)
+ * 3. Member Management Routes
  */
+// List members of project (Owner & Members)
+router.get(
+    "/:id/members",
+    validate({ params: projectParamsSchema }),
+    requireMembership,
+    projectController.getMembers
+);
+
+// Add member to project (Owner only)
 router.post(
     "/:id/members",
     validate({ params: projectParamsSchema, body: addMemberSchema }),
@@ -75,6 +103,7 @@ router.post(
     projectController.addMember
 );
 
+// Remove member from project (Owner only)
 router.delete(
     "/:id/members/:userId",
     validate({ params: memberParamsSchema }),

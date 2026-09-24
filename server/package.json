@@ -19,7 +19,8 @@
     "test:auth": "tsx src/scripts/test-auth.ts",
     "test:projects": "tsx src/scripts/test-projects.ts",
     "test:tasks": "tsx src/scripts/test-tasks.ts",
-    "test:ratelimit": "tsx src/scripts/test-ratelimit.ts"
+    "test:ratelimit": "tsx src/scripts/test-ratelimit.ts",
+    "test:new-routes": "tsx src/scripts/test-new-routes.ts"
   },
   "keywords": [],
   "author": "",

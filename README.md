@@ -197,27 +197,34 @@ All responses use a standardized JSON envelope:
 * **Error**: `{ success: false, error: string, message: string, details?: any }`
 
 ### Authentication (`/api/auth`)
-* `POST /api/auth/register` — Register new user + profile (Rate Limited)
-* `POST /api/auth/login` — Authenticate user, receive access token & HttpOnly cookies (Rate Limited)
-* `POST /api/auth/refresh` — Issue fresh access token using active refresh token
-* `POST /api/auth/logout` — Invalidate session & clear cookies
-* `GET  /api/auth/me` — Get authenticated user details (Requires Auth)
+* `POST   /api/auth/register` — Register new user + profile (Rate Limited)
+* `POST   /api/auth/login` — Authenticate user, receive access token & HttpOnly cookies (Rate Limited)
+* `POST   /api/auth/refresh` — Issue fresh access token using active refresh token
+* `POST   /api/auth/logout` — Invalidate session & clear cookies
+* `GET    /api/auth/me` (or `/profile`) — Get authenticated user details & profile (Requires Auth)
+* `PUT    /api/auth/profile` — Update user profile details (`name`, `bio`)
 
 ### Projects (`/api/projects`)
 * `POST   /api/projects` — Create project (Creator becomes `owner`)
-* `GET    /api/projects` — List user's projects (supports `?page=&limit=&search=&sortBy=&order=`)
-* `GET    /api/projects/:id` — Get project details & team members (Members only)
+* `GET    /api/projects` — List user's projects (supports `?role=owner|member&page=&limit=&search=&sortBy=&order=`)
+* `GET    /api/projects/owned` — Convenience endpoint for projects owned by user
+* `GET    /api/projects/member` — Convenience endpoint for projects where user is member
+* `GET    /api/projects/:id` — Get project details (Members only)
+* `GET    /api/projects/:id/progress` — Get project completion percentage & task statistics breakdown
 * `PUT    /api/projects/:id` — Update project metadata (Owner only)
 * `DELETE /api/projects/:id` — Delete project & cascade tasks (Owner only)
+* `GET    /api/projects/:id/members` — List all members & engineers of the project
 * `POST   /api/projects/:id/members` — Add member to project (Owner only)
 * `DELETE /api/projects/:id/members/:userId` — Remove member (Owner only, cannot remove owner)
 
-### Tasks (`/api/projects/:id/tasks` & `/api/tasks`)
+### Tasks (`/api/tasks` & `/api/projects/:id/tasks`)
+* `GET    /api/tasks/my` — List all tasks assigned to authenticated user across all projects
 * `POST   /api/projects/:id/tasks` — Create task within project (Owner only, validates assignee)
 * `GET    /api/projects/:id/tasks` — List project tasks (supports `?status=&priority=&assignedTo=&search=&page=&limit=`)
 * `GET    /api/tasks/:id` — Get single task details (Members only)
 * `PUT    /api/tasks/:id` — Update task title, description, priority, assignee (Owner only)
 * `PATCH  /api/tasks/:id/status` — Update task status (Owner or Assigned Member only)
+* `PATCH  /api/tasks/:id/assign` — Dedicated assign/unassign endpoint (Owner only, accepts `{ "assignedTo": "<userId>" | null }`)
 * `DELETE /api/tasks/:id` — Delete task (Owner only)
 
 ---

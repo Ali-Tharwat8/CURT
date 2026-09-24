@@ -117,7 +117,7 @@ export class AuthController {
     });
 
     /**
-     * GET /api/auth/me
+     * GET /api/auth/me (or /api/auth/profile)
      * Returns authenticated user profile (req.user attached by authMiddleware)
      */
     getMe = catchAsync(async (req: Request, res: Response) => {
@@ -129,6 +129,24 @@ export class AuthController {
 
         res.status(200).json({
             success: true,
+            data: user,
+        });
+    });
+
+    /**
+     * PUT /api/auth/profile
+     * Update authenticated user profile details (name, bio)
+     */
+    updateProfile = catchAsync(async (req: Request, res: Response) => {
+        if (!req.user) {
+            throw AppError.unauthorized("Authentication required");
+        }
+
+        const user = await authService.updateProfile(req.user.id, req.body);
+
+        res.status(200).json({
+            success: true,
+            message: "Profile updated successfully",
             data: user,
         });
     });

@@ -109,6 +109,32 @@ export class ProjectController {
             message: result.message,
         });
     });
+
+    /**
+     * GET /api/projects/:id/members
+     * List all members of a project (Owner & Members)
+     */
+    getMembers = catchAsync(async (req: Request, res: Response) => {
+        const members = await projectService.getProjectMembers(req.params.id as string);
+
+        res.status(200).json({
+            success: true,
+            data: members,
+        });
+    });
+
+    /**
+     * GET /api/projects/:id/progress
+     * View project completion rate and task statistics (Owner & Members)
+     */
+    getProgress = catchAsync(async (req: Request, res: Response) => {
+        const progress = await projectService.getProjectProgress(req.params.id as string);
+
+        res.status(200).json({
+            success: true,
+            data: progress,
+        });
+    });
 }
 
 export const projectController = new ProjectController();

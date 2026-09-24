@@ -38,12 +38,13 @@ export class ProjectService {
      * Supports search by name, sorting, and pagination
      */
     async getUserProjects(userId: string, query: ListProjectsQueryInput) {
-        const { page = 1, limit = 10, search, sortBy = "created_at", order = "desc" } = query;
+        const { role, page = 1, limit = 10, search, sortBy = "created_at", order = "desc" } = query;
         const offset = (page - 1) * limit;
 
-        // Get all project IDs where user is a member
+        // Get all project IDs where user is a member (optionally filtered by role)
         const userMemberships = await db.query.projectMembers.findMany({
-            where: (pm, { eq }) => eq(pm.userId, userId),
+            where: (pm, { eq, and }) =>
+                role ? and(eq(pm.userId, userId), eq(pm.role, role)) : eq(pm.userId, userId),
             columns: { projectId: true, role: true },
         });
 
@@ -285,6 +286,110 @@ export class ProjectService {
             .where(and(eq(projectMembers.projectId, projectId), eq(projectMembers.userId, targetUserId)));
 
         return { message: "Member removed from project successfully" };
+    }
+
+    /**
+     * 8. List all members belonging to a project
+     */
+    async getProjectMembers(projectId: string) {
+        const project = await db.query.projects.findFirst({
+            where: (p, { eq }) => eq(p.id, projectId),
+        });
+
+        if (!project) {
+            throw AppError.notFound("Project not found");
+        }
+
+        const members = await db.query.projectMembers.findMany({
+            where: (pm, { eq }) => eq(pm.projectId, projectId),
+            orderBy: (pm, { asc }) => asc(pm.joinedAt),
+            with: {
+                user: {
+                    columns: { id: true, username: true, email: true },
+                    with: { profile: true },
+                },
+            },
+        });
+
+        return members.map((m) => ({
+            membershipId: m.id,
+            userId: m.user.id,
+            username: m.user.username,
+            email: m.user.email,
+            name: m.user.profile?.name || m.user.username,
+            bio: m.user.profile?.bio || null,
+            role: m.role,
+            joinedAt: m.joinedAt,
+        }));
+    }
+
+    /**
+     * 9. Get detailed project progress, completion rates, and task statistics
+     */
+    async getProjectProgress(projectId: string) {
+        const project = await db.query.projects.findFirst({
+            where: (p, { eq }) => eq(p.id, projectId),
+            with: {
+                tasks: {
+                    with: {
+                        assignee: {
+                            columns: { id: true, username: true },
+                            with: { profile: { columns: { name: true } } },
+                        },
+                    },
+                },
+                members: {
+                    with: {
+                        user: {
+                            columns: { id: true, username: true },
+                            with: { profile: { columns: { name: true } } },
+                        },
+                    },
+                },
+            },
+        });
+
+        if (!project) {
+            throw AppError.notFound("Project not found");
+        }
+
+        const totalTasks = project.tasks.length;
+        const doneTasks = project.tasks.filter((t) => t.status === "Done").length;
+        const inProgressTasks = project.tasks.filter((t) => t.status === "In progress").length;
+        const todoTasks = project.tasks.filter((t) => t.status === "To Do").length;
+
+        const completionPercentage = totalTasks === 0 ? 0 : Math.round((doneTasks / totalTasks) * 100);
+
+        const priorityStats = {
+            high: project.tasks.filter((t) => t.priority === "High").length,
+            medium: project.tasks.filter((t) => t.priority === "Medium").length,
+            low: project.tasks.filter((t) => t.priority === "Low").length,
+        };
+
+        const memberProgress = project.members.map((m) => {
+            const memberTasks = project.tasks.filter((t) => t.assignedTo === m.userId);
+            const memberDone = memberTasks.filter((t) => t.status === "Done").length;
+            return {
+                userId: m.userId,
+                username: m.user.username,
+                name: m.user.profile?.name || m.user.username,
+                role: m.role,
+                assignedTasksCount: memberTasks.length,
+                completedTasksCount: memberDone,
+            };
+        });
+
+        return {
+            projectId: project.id,
+            projectName: project.name,
+            totalTasks,
+            completedTasks: doneTasks,
+            inProgressTasks,
+            todoTasks,
+            completionPercentage,
+            priorityStats,
+            memberProgress,
+        };
     }
 }
 

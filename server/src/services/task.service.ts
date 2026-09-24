@@ -6,6 +6,8 @@ import type {
     CreateTaskInput,
     UpdateTaskInput,
     ListTasksQueryInput,
+    ListMyTasksQueryInput,
+    AssignTaskInput,
 } from "@/validators/task.validator.js";
 
 export class TaskService {
@@ -341,6 +343,139 @@ export class TaskService {
         await db.delete(tasks).where(eq(tasks.id, taskId));
 
         return { message: "Task deleted successfully" };
+    }
+
+    /**
+     * 7. List all tasks assigned to the currently authenticated user across projects
+     */
+    async getMyTasks(userId: string, query: ListMyTasksQueryInput) {
+        const {
+            page = 1,
+            limit = 10,
+            status,
+            priority,
+            search,
+            sortBy = "created_at",
+            order = "desc",
+        } = query;
+
+        const offset = (page - 1) * limit;
+
+        const conditions = [eq(tasks.assignedTo, userId)];
+
+        if (status) {
+            conditions.push(eq(tasks.status, status));
+        }
+
+        if (priority) {
+            conditions.push(eq(tasks.priority, priority));
+        }
+
+        if (search) {
+            conditions.push(ilike(tasks.title, `%${search}%`));
+        }
+
+        const whereClause = and(...conditions);
+
+        const [{ count: totalCount }] = await db
+            .select({ count: count() })
+            .from(tasks)
+            .where(whereClause);
+
+        const total = Number(totalCount);
+        const totalPages = Math.ceil(total / limit);
+
+        const orderColumn =
+            sortBy === "priority"
+                ? tasks.priority
+                : sortBy === "status"
+                ? tasks.status
+                : tasks.createdAt;
+
+        const orderByClause = order === "asc" ? asc(orderColumn) : desc(orderColumn);
+
+        const taskList = await db.query.tasks.findMany({
+            where: whereClause,
+            orderBy: orderByClause,
+            limit,
+            offset,
+            with: {
+                project: {
+                    columns: { id: true, name: true },
+                },
+            },
+        });
+
+        const formatted = taskList.map((t) => ({
+            id: t.id,
+            projectId: t.projectId,
+            projectName: t.project.name,
+            title: t.title,
+            description: t.description,
+            priority: t.priority,
+            status: t.status,
+            createdAt: t.createdAt,
+            updatedAt: t.updatedAt,
+        }));
+
+        return {
+            tasks: formatted,
+            pagination: { page, limit, total, totalPages },
+        };
+    }
+
+    /**
+     * 8. Assign or unassign a task to a project member (Owner only)
+     */
+    async assignTask(taskId: string, userId: string, targetAssigneeId: string | null) {
+        const task = await db.query.tasks.findFirst({
+            where: (t, { eq }) => eq(t.id, taskId),
+        });
+
+        if (!task) {
+            throw AppError.notFound("Task not found");
+        }
+
+        // Verify requester is project owner
+        const membership = await db.query.projectMembers.findFirst({
+            where: (pm, { and, eq }) => and(
+                eq(pm.projectId, task.projectId),
+                eq(pm.userId, userId)
+            ),
+        });
+
+        if (!membership) {
+            throw AppError.forbidden("You do not have access to this project");
+        }
+
+        if (membership.role !== "owner") {
+            throw AppError.forbidden("Only the project owner can assign or unassign tasks");
+        }
+
+        // If assigning to a user, verify that user is an active member of this project
+        if (targetAssigneeId) {
+            const isMember = await db.query.projectMembers.findFirst({
+                where: (pm, { and, eq }) => and(
+                    eq(pm.projectId, task.projectId),
+                    eq(pm.userId, targetAssigneeId)
+                ),
+            });
+
+            if (!isMember) {
+                throw AppError.badRequest("Assignee must be an active member of this project");
+            }
+        }
+
+        const [updated] = await db
+            .update(tasks)
+            .set({
+                assignedTo: targetAssigneeId,
+                updatedAt: new Date(),
+            })
+            .where(eq(tasks.id, taskId))
+            .returning();
+
+        return this.getById(updated.id, userId);
     }
 }
 
