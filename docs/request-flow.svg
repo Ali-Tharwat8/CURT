@@ -1,0 +1,612 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1840 1140" width="100%" height="100%">
+  <defs>
+    <!-- Background Gradient -->
+    <radialGradient id="bgGlow" cx="50%" cy="30%" r="80%">
+      <stop offset="0%" stop-color="#0f172a"/>
+      <stop offset="100%" stop-color="#020617"/>
+    </radialGradient>
+
+    <!-- Card Gradients -->
+    <linearGradient id="cardGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1e293b"/>
+      <stop offset="100%" stop-color="#0f172a"/>
+    </linearGradient>
+
+    <linearGradient id="dbCardGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#064e3b"/>
+      <stop offset="100%" stop-color="#022c22"/>
+    </linearGradient>
+
+    <!-- Distinct Error Card Gradients (Eye-Friendly & Differentiated) -->
+    <linearGradient id="amberGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#451a03"/>
+      <stop offset="100%" stop-color="#1c0a02"/>
+    </linearGradient>
+
+    <linearGradient id="yellowGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#422006"/>
+      <stop offset="100%" stop-color="#1f1003"/>
+    </linearGradient>
+
+    <linearGradient id="roseGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#4c0519"/>
+      <stop offset="100%" stop-color="#20020a"/>
+    </linearGradient>
+
+    <linearGradient id="redGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#450a0a"/>
+      <stop offset="100%" stop-color="#1a0404"/>
+    </linearGradient>
+
+    <!-- Arrow Markers -->
+    <marker id="arrow-cyan" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#38bdf8"/>
+    </marker>
+    <marker id="arrow-emerald" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#10b981"/>
+    </marker>
+    <marker id="arrow-amber" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#f59e0b"/>
+    </marker>
+    <marker id="arrow-yellow" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#eab308"/>
+    </marker>
+    <marker id="arrow-rose" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#f43f5e"/>
+    </marker>
+    <marker id="arrow-red" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#ef4444"/>
+    </marker>
+
+    <!-- Shadow -->
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="125%">
+      <feDropShadow dx="0" dy="8" stdDeviation="8" flood-color="#000000" flood-opacity="0.6"/>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1840" height="1140" fill="url(#bgGlow)"/>
+
+  <!-- Grid overlay -->
+  <g opacity="0.04" stroke="#ffffff" stroke-width="1">
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40"/>
+    </pattern>
+    <rect width="1840" height="1140" fill="url(#grid)"/>
+  </g>
+
+  <!-- Title Header -->
+  <g text-anchor="middle">
+    <text x="920" y="55" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="32" font-weight="800" fill="#f8fafc" letter-spacing="-0.02em">
+      CURT Backend — Register / Sign Up Request Architecture &amp; Error Mapping
+    </text>
+    <rect x="700" y="70" width="440" height="28" rx="14" fill="#0284c7" opacity="0.2"/>
+    <text x="920" y="89" font-family="ui-monospace, monospace" font-size="13" font-weight="700" fill="#38bdf8">
+      PRECISE EXECUTION PIPELINE &amp; EXACT ERROR ORIGIN TRACKING
+    </text>
+  </g>
+
+  <!-- ========================================================================= -->
+  <!-- COLUMN 1: CLIENT REQUEST (SIGN UP) -->
+  <!-- ========================================================================= -->
+  <g transform="translate(30, 120)" filter="url(#shadow)">
+    <rect width="200" height="520" rx="14" fill="url(#cardGrad)" stroke="#38bdf8" stroke-width="2"/>
+    <rect x="0" y="0" width="200" height="44" rx="14" fill="#38bdf8" opacity="0.15"/>
+    <circle cx="26" cy="22" r="10" fill="#38bdf8"/>
+    <text x="26" y="27" font-family="sans-serif" font-size="12" font-weight="bold" fill="#0f172a" text-anchor="middle">1</text>
+    <text x="46" y="27" font-family="sans-serif" font-size="14" font-weight="700" fill="#f8fafc">Client (Sign Up)</text>
+
+    <text x="16" y="70" font-family="sans-serif" font-size="10" font-weight="700" fill="#94a3b8" letter-spacing="0.05em">HTTP REQUEST</text>
+    <rect x="12" y="80" width="176" height="40" rx="6" fill="#0b1120" stroke="#38bdf8"/>
+    <text x="22" y="105" font-family="ui-monospace, monospace" font-size="11" font-weight="bold" fill="#38bdf8">POST /api/auth/register</text>
+
+    <!-- Headers box -->
+    <rect x="12" y="130" width="176" height="52" rx="6" fill="#0b1120" stroke="#334155"/>
+    <text x="20" y="148" font-family="sans-serif" font-size="9" font-weight="bold" fill="#64748b">REQUEST HEADERS</text>
+    <text x="20" y="168" font-family="ui-monospace, monospace" font-size="10" fill="#cbd5e1">Content-Type: application/json</text>
+
+    <!-- Payload JSON -->
+    <rect x="12" y="192" width="176" height="225" rx="8" fill="#0b1120" stroke="#334155" stroke-width="1"/>
+    <text x="22" y="212" font-family="ui-monospace, monospace" font-size="10" font-weight="bold" fill="#64748b">BODY PAYLOAD (JSON)</text>
+    <text x="22" y="235" font-family="ui-monospace, monospace" font-size="11" fill="#e2e8f0">{</text>
+    <text x="30" y="255" font-family="ui-monospace, monospace" font-size="11" fill="#38bdf8"> "username":</text>
+    <text x="42" y="272" font-family="ui-monospace, monospace" font-size="10" fill="#94a3b8">"karim_amr",</text>
+    <text x="30" y="292" font-family="ui-monospace, monospace" font-size="11" fill="#38bdf8"> "email":</text>
+    <text x="42" y="309" font-family="ui-monospace, monospace" font-size="10" fill="#94a3b8">"karim@curt.racing",</text>
+    <text x="30" y="329" font-family="ui-monospace, monospace" font-size="11" fill="#38bdf8"> "password":</text>
+    <text x="42" y="346" font-family="ui-monospace, monospace" font-size="10" fill="#94a3b8">"CurtPassword123!",</text>
+    <text x="30" y="366" font-family="ui-monospace, monospace" font-size="11" fill="#38bdf8"> "name":</text>
+    <text x="42" y="383" font-family="ui-monospace, monospace" font-size="10" fill="#94a3b8">"Karim Amr"</text>
+    <text x="22" y="405" font-family="ui-monospace, monospace" font-size="11" fill="#e2e8f0">}</text>
+
+    <!-- Client Types -->
+    <rect x="12" y="427" width="176" height="80" rx="6" fill="#0b1120" stroke="#334155"/>
+    <text x="20" y="445" font-family="sans-serif" font-size="9" font-weight="bold" fill="#64748b">CLIENT ORIGINS</text>
+    <text x="20" y="465" font-family="sans-serif" font-size="10" fill="#cbd5e1">• Frontend React / Next.js</text>
+    <text x="20" y="485" font-family="sans-serif" font-size="10" fill="#cbd5e1">• Mobile App Client</text>
+    <text x="20" y="502" font-family="sans-serif" font-size="10" fill="#cbd5e1">• Postman / Newman CLI</text>
+  </g>
+
+  <!-- Arrow Col 1 -> Col 2 -->
+  <path d="M 230 380 L 265 380" stroke="#38bdf8" stroke-width="2.5" marker-end="url(#arrow-cyan)"/>
+
+  <!-- ========================================================================= -->
+  <!-- COLUMN 2: ENTRY POINT & APP DISPATCHER -->
+  <!-- ========================================================================= -->
+  <g transform="translate(270, 120)" filter="url(#shadow)">
+    <rect width="205" height="520" rx="14" fill="url(#cardGrad)" stroke="#475569" stroke-width="1.5"/>
+    <rect x="0" y="0" width="205" height="44" rx="14" fill="#64748b" opacity="0.15"/>
+    <circle cx="26" cy="22" r="10" fill="#64748b"/>
+    <text x="26" y="27" font-family="sans-serif" font-size="12" font-weight="bold" fill="#f8fafc" text-anchor="middle">2</text>
+    <text x="46" y="27" font-family="sans-serif" font-size="14" font-weight="700" fill="#f8fafc">Server &amp; App</text>
+
+    <!-- index.ts -->
+    <rect x="12" y="55" width="181" height="145" rx="8" fill="#0b1120" stroke="#38bdf8" stroke-width="1"/>
+    <text x="22" y="78" font-family="ui-monospace, monospace" font-size="11" font-weight="bold" fill="#38bdf8">server/src/index.ts</text>
+    <text x="22" y="100" font-family="sans-serif" font-size="11" fill="#cbd5e1">• Loads environment</text>
+    <text x="32" y="116" font-family="sans-serif" font-size="10" fill="#94a3b8">(dotenv/config)</text>
+    <text x="22" y="136" font-family="sans-serif" font-size="11" fill="#cbd5e1">• Inits Supabase DB pool</text>
+    <text x="22" y="156" font-family="sans-serif" font-size="11" fill="#cbd5e1">• Binds port 3000 listener</text>
+    <text x="22" y="176" font-family="sans-serif" font-size="11" fill="#cbd5e1">• Exports default app</text>
+    <text x="32" y="192" font-family="sans-serif" font-size="10" fill="#94a3b8">(Vercel serverless)</text>
+
+    <!-- app.ts -->
+    <rect x="12" y="210" width="181" height="298" rx="8" fill="#0b1120" stroke="#475569" stroke-width="1"/>
+    <text x="22" y="233" font-family="ui-monospace, monospace" font-size="11" font-weight="bold" fill="#38bdf8">server/src/app.ts</text>
+    <text x="22" y="253" font-family="sans-serif" font-size="9" font-weight="bold" fill="#64748b">GLOBAL PIPELINE ORDER</text>
+    <text x="22" y="273" font-family="sans-serif" font-size="11" fill="#cbd5e1">1. helmet() security</text>
+    <text x="22" y="293" font-family="sans-serif" font-size="11" fill="#cbd5e1">2. httpLogger (Morgan)</text>
+    <text x="22" y="313" font-family="sans-serif" font-size="11" fill="#cbd5e1">3. cors({ origin: true })</text>
+    <text x="22" y="333" font-family="sans-serif" font-size="11" fill="#cbd5e1">4. express.json()</text>
+    <text x="22" y="353" font-family="sans-serif" font-size="11" fill="#cbd5e1">5. cookieParser()</text>
+    <text x="22" y="373" font-family="sans-serif" font-size="11" fill="#cbd5e1">6. apiLimiter (/api)</text>
+
+    <text x="22" y="403" font-family="sans-serif" font-size="9" font-weight="bold" fill="#64748b">ROUTE ROUTING</text>
+    <rect x="18" y="413" width="169" height="34" rx="4" fill="#1e293b"/>
+    <text x="26" y="433" font-family="ui-monospace, monospace" font-size="10" font-weight="bold" fill="#38bdf8">app.use("/api/auth", ...)</text>
+
+    <text x="22" y="468" font-family="sans-serif" font-size="9" font-weight="bold" fill="#64748b">LAST MIDDLEWARE</text>
+    <rect x="18" y="478" width="169" height="25" rx="4" fill="#3b0707" stroke="#ef4444"/>
+    <text x="26" y="495" font-family="ui-monospace, monospace" font-size="9.5" font-weight="bold" fill="#fca5a5">app.use(errorHandler)</text>
+  </g>
+
+  <!-- Arrow Col 2 -> Col 3 -->
+  <path d="M 475 380 L 510 380" stroke="#38bdf8" stroke-width="2.5" marker-end="url(#arrow-cyan)"/>
+
+  <!-- ========================================================================= -->
+  <!-- COLUMN 3: MIDDLEWARES APPLIED TO REGISTER -->
+  <!-- ========================================================================= -->
+  <g transform="translate(515, 120)" filter="url(#shadow)">
+    <rect width="235" height="520" rx="14" fill="url(#cardGrad)" stroke="#c084fc" stroke-width="2"/>
+    <rect x="0" y="0" width="235" height="44" rx="14" fill="#c084fc" opacity="0.15"/>
+    <circle cx="26" cy="22" r="10" fill="#c084fc"/>
+    <text x="26" y="27" font-family="sans-serif" font-size="12" font-weight="bold" fill="#0f172a" text-anchor="middle">3</text>
+    <text x="46" y="27" font-family="sans-serif" font-size="14" font-weight="700" fill="#f8fafc">Register Middlewares</text>
+
+    <!-- auth.routes.ts definition -->
+    <rect x="12" y="55" width="211" height="52" rx="6" fill="#0b1120" stroke="#c084fc"/>
+    <text x="20" y="74" font-family="ui-monospace, monospace" font-size="10" font-weight="bold" fill="#c084fc">routes/auth.routes.ts</text>
+    <text x="20" y="92" font-family="ui-monospace, monospace" font-size="9" fill="#e2e8f0">router.post("/register",</text>
+    <text x="20" y="103" font-family="ui-monospace, monospace" font-size="8.5" fill="#94a3b8">  authLimiter, validate(reg), ctrl)</text>
+
+    <!-- rateLimit.middleware.ts -->
+    <rect x="12" y="115" width="211" height="135" rx="6" fill="#0b1120" stroke="#f59e0b" stroke-width="1.5"/>
+    <text x="20" y="135" font-family="ui-monospace, monospace" font-size="11" font-weight="bold" fill="#f59e0b">rateLimit.middleware.ts</text>
+    <text x="20" y="155" font-family="sans-serif" font-size="10" font-weight="bold" fill="#f8fafc">1. apiLimiter (Global)</text>
+    <text x="28" y="171" font-family="sans-serif" font-size="9.5" fill="#94a3b8">• 500 requests / 15 min per IP</text>
+
+    <text x="20" y="193" font-family="sans-serif" font-size="10" font-weight="bold" fill="#f59e0b">2. authLimiter (Brute-Force Guard)</text>
+    <text x="28" y="209" font-family="sans-serif" font-size="9.5" fill="#fde68a">• 10 signups / 15 min per IP</text>
+    <rect x="20" y="218" width="195" height="24" rx="4" fill="#451a03" stroke="#f59e0b"/>
+    <text x="26" y="234" font-family="sans-serif" font-size="9.5" font-weight="bold" fill="#fde68a">⚡ ERROR SOURCE 1 ➔ 429 Too Many Req</text>
+
+    <!-- validate.middleware.ts -->
+    <rect x="12" y="260" width="211" height="110" rx="6" fill="#0b1120" stroke="#38bdf8"/>
+    <text x="20" y="280" font-family="ui-monospace, monospace" font-size="11" font-weight="bold" fill="#38bdf8">validate.middleware.ts</text>
+    <text x="20" y="300" font-family="sans-serif" font-size="10" font-weight="bold" fill="#f8fafc">3. validate(registerSchema)</text>
+    <text x="20" y="318" font-family="sans-serif" font-size="9.5" fill="#cbd5e1">• Runs Zod schema on req.body</text>
+    <text x="20" y="336" font-family="sans-serif" font-size="9.5" fill="#cbd5e1">• Sanitizes &amp; trims whitespace</text>
+    <text x="20" y="356" font-family="sans-serif" font-size="9" fill="#94a3b8">If valid ➔ calls next() to Controller</text>
+
+    <!-- Note on public route -->
+    <rect x="12" y="380" width="211" height="128" rx="6" fill="#0b1120" stroke="#334155"/>
+    <text x="20" y="400" font-family="sans-serif" font-size="9" font-weight="bold" fill="#64748b">SKIPPED ON REGISTER (PUBLIC)</text>
+    <text x="20" y="420" font-family="ui-monospace, monospace" font-size="10" fill="#64748b">✕ auth.middleware.ts</text>
+    <text x="28" y="435" font-family="sans-serif" font-size="9" fill="#64748b">(Register is public, no token)</text>
+    <text x="20" y="455" font-family="ui-monospace, monospace" font-size="10" fill="#64748b">✕ rbac.middleware.ts</text>
+    <text x="28" y="470" font-family="sans-serif" font-size="9" fill="#64748b">(No project membership yet)</text>
+    <text x="20" y="495" font-family="sans-serif" font-size="9" font-weight="bold" fill="#38bdf8">✓ Passes clean to Validator ➔</text>
+  </g>
+
+  <!-- Arrow Col 3 -> Col 4 -->
+  <path d="M 750 380 L 785 380" stroke="#38bdf8" stroke-width="2.5" marker-end="url(#arrow-cyan)"/>
+
+  <!-- ========================================================================= -->
+  <!-- COLUMN 4: VALIDATOR (registerSchema) -->
+  <!-- ========================================================================= -->
+  <g transform="translate(790, 120)" filter="url(#shadow)">
+    <rect width="210" height="520" rx="14" fill="url(#cardGrad)" stroke="#eab308" stroke-width="1.5"/>
+    <rect x="0" y="0" width="210" height="44" rx="14" fill="#eab308" opacity="0.15"/>
+    <circle cx="26" cy="22" r="10" fill="#eab308"/>
+    <text x="26" y="27" font-family="sans-serif" font-size="12" font-weight="bold" fill="#0f172a" text-anchor="middle">4</text>
+    <text x="46" y="27" font-family="sans-serif" font-size="14" font-weight="700" fill="#f8fafc">Zod Validation</text>
+
+    <rect x="12" y="55" width="186" height="35" rx="6" fill="#0b1120" stroke="#eab308"/>
+    <text x="20" y="78" font-family="ui-monospace, monospace" font-size="10.5" font-weight="bold" fill="#eab308">validators/auth.validator.ts</text>
+
+    <rect x="12" y="98" width="186" height="365" rx="8" fill="#0b1120" stroke="#334155"/>
+    <text x="20" y="120" font-family="ui-monospace, monospace" font-size="11" font-weight="bold" fill="#eab308">registerSchema = z.object({</text>
+
+    <!-- Field 1: username -->
+    <text x="20" y="145" font-family="ui-monospace, monospace" font-size="10.5" font-weight="bold" fill="#38bdf8">username:</text>
+    <text x="26" y="162" font-family="sans-serif" font-size="9.5" fill="#cbd5e1">• min(3), max(50) chars</text>
+    <text x="26" y="178" font-family="ui-monospace, monospace" font-size="8.5" fill="#94a3b8">• regex(/^[a-zA-Z0-9_]+$/)</text>
+
+    <!-- Field 2: email -->
+    <text x="20" y="205" font-family="ui-monospace, monospace" font-size="10.5" font-weight="bold" fill="#38bdf8">email:</text>
+    <text x="26" y="222" font-family="sans-serif" font-size="9.5" fill="#cbd5e1">• email("Invalid format")</text>
+
+    <!-- Field 3: password -->
+    <text x="20" y="249" font-family="ui-monospace, monospace" font-size="10.5" font-weight="bold" fill="#38bdf8">password:</text>
+    <text x="26" y="266" font-family="sans-serif" font-size="9.5" fill="#cbd5e1">• min(8 chars)</text>
+    <text x="26" y="282" font-family="sans-serif" font-size="9.5" fill="#cbd5e1">• regex: 1 uppercase letter</text>
+    <text x="26" y="298" font-family="sans-serif" font-size="9.5" fill="#cbd5e1">• regex: 1 number</text>
+
+    <!-- Field 4: name -->
+    <text x="20" y="325" font-family="ui-monospace, monospace" font-size="10.5" font-weight="bold" fill="#38bdf8">name (optional):</text>
+    <text x="26" y="342" font-family="sans-serif" font-size="9.5" fill="#cbd5e1">• min(2), max(100) chars</text>
+
+    <text x="20" y="372" font-family="ui-monospace, monospace" font-size="11" fill="#eab308">})</text>
+
+    <!-- Inferred Type -->
+    <rect x="18" y="388" width="174" height="35" rx="4" fill="#1e1e2e"/>
+    <text x="24" y="405" font-family="ui-monospace, monospace" font-size="8.5" fill="#94a3b8">type RegisterInput =</text>
+    <text x="24" y="418" font-family="ui-monospace, monospace" font-size="8.5" fill="#eab308">  z.infer&lt;typeof registerSchema&gt;</text>
+
+    <!-- Error Source Badge -->
+    <rect x="12" y="470" width="186" height="35" rx="4" fill="#422006" stroke="#eab308"/>
+    <text x="20" y="491" font-family="sans-serif" font-size="9.5" font-weight="bold" fill="#fef08a">⚡ ERROR SOURCE 2 ➔ 400 ZodError</text>
+  </g>
+
+  <!-- Arrow Col 4 -> Col 5 -->
+  <path d="M 1000 380 L 1035 380" stroke="#38bdf8" stroke-width="2.5" marker-end="url(#arrow-cyan)"/>
+
+  <!-- ========================================================================= -->
+  <!-- COLUMN 5: CONTROLLER & UTILITIES -->
+  <!-- ========================================================================= -->
+  <g transform="translate(1040, 120)" filter="url(#shadow)">
+    <rect width="230" height="520" rx="14" fill="url(#cardGrad)" stroke="#38bdf8" stroke-width="1.5"/>
+    <rect x="0" y="0" width="230" height="44" rx="14" fill="#38bdf8" opacity="0.15"/>
+    <circle cx="26" cy="22" r="10" fill="#38bdf8"/>
+    <text x="26" y="27" font-family="sans-serif" font-size="12" font-weight="bold" fill="#0f172a" text-anchor="middle">5</text>
+    <text x="46" y="27" font-family="sans-serif" font-size="14" font-weight="700" fill="#f8fafc">Controller &amp; Utils</text>
+
+    <!-- auth.controller.ts: register -->
+    <rect x="12" y="55" width="206" height="145" rx="6" fill="#0b1120" stroke="#38bdf8"/>
+    <text x="20" y="75" font-family="ui-monospace, monospace" font-size="11" font-weight="bold" fill="#38bdf8">auth.controller.ts</text>
+    <text x="20" y="95" font-family="sans-serif" font-size="10" font-weight="bold" fill="#f8fafc">• register = catchAsync(...)</text>
+    <text x="20" y="113" font-family="sans-serif" font-size="9.5" fill="#cbd5e1">• Calls authService.register(req.body)</text>
+    <text x="20" y="131" font-family="sans-serif" font-size="9.5" fill="#cbd5e1">• Receives { user, accessToken, refresh }</text>
+    <text x="20" y="149" font-family="sans-serif" font-size="9.5" fill="#cbd5e1">• Calls this.setAuthCookies(res, ...)</text>
+    <text x="20" y="167" font-family="sans-serif" font-size="9.5" fill="#cbd5e1">• Sends res.status(201).json(...)</text>
+    <text x="20" y="188" font-family="sans-serif" font-size="9" fill="#94a3b8">HTTP 201 Created Response</text>
+
+    <!-- utils/catchAsync.ts -->
+    <rect x="12" y="210" width="206" height="60" rx="6" fill="#0b1120" stroke="#a855f7"/>
+    <text x="20" y="230" font-family="ui-monospace, monospace" font-size="11" font-weight="bold" fill="#a855f7">utils/catchAsync.ts</text>
+    <text x="20" y="248" font-family="sans-serif" font-size="9.5" fill="#cbd5e1">Catches async controller errors:</text>
+    <text x="20" y="262" font-family="ui-monospace, monospace" font-size="9" fill="#fca5a5">fn(req,res,next).catch(next)</text>
+
+    <!-- utils/jwt.ts & config/jwt.ts -->
+    <rect x="12" y="280" width="206" height="135" rx="6" fill="#0b1120" stroke="#334155"/>
+    <text x="20" y="300" font-family="ui-monospace, monospace" font-size="11" font-weight="bold" fill="#38bdf8">utils/jwt.ts + config/jwt.ts</text>
+    <text x="20" y="320" font-family="sans-serif" font-size="10" fill="#cbd5e1">• signAccessToken(payload)</text>
+    <text x="30" y="335" font-family="sans-serif" font-size="9" fill="#94a3b8">Expires in 15 minutes</text>
+    <text x="20" y="353" font-family="sans-serif" font-size="10" fill="#cbd5e1">• signRefreshToken(payload)</text>
+    <text x="30" y="368" font-family="sans-serif" font-size="9" fill="#94a3b8">Expires in 7 days + unique jti UUID</text>
+    <text x="20" y="386" font-family="sans-serif" font-size="10" fill="#cbd5e1">• hashToken(refreshToken)</text>
+    <text x="30" y="401" font-family="sans-serif" font-size="9" fill="#94a3b8">SHA-256 for secure DB persistence</text>
+
+    <!-- utils/appError.ts -->
+    <rect x="12" y="425" width="206" height="85" rx="6" fill="#0b1120" stroke="#f43f5e"/>
+    <text x="20" y="445" font-family="ui-monospace, monospace" font-size="11" font-weight="bold" fill="#f43f5e">utils/appError.ts</text>
+    <text x="20" y="463" font-family="sans-serif" font-size="9.5" fill="#cbd5e1">AppError.conflict(message, 409):</text>
+    <text x="20" y="480" font-family="sans-serif" font-size="9" fill="#94a3b8">Used when username or email is taken</text>
+    <text x="20" y="497" font-family="ui-monospace, monospace" font-size="8.5" fill="#fca5a5">statusCode = 409, isOperational = true</text>
+  </g>
+
+  <!-- Arrow Col 5 -> Col 6 -->
+  <path d="M 1270 380 L 1305 380" stroke="#38bdf8" stroke-width="2.5" marker-end="url(#arrow-cyan)"/>
+
+  <!-- ========================================================================= -->
+  <!-- COLUMN 6: DOMAIN SERVICE (REGISTER LOGIC) -->
+  <!-- ========================================================================= -->
+  <g transform="translate(1310, 120)" filter="url(#shadow)">
+    <rect width="230" height="520" rx="14" fill="url(#cardGrad)" stroke="#f43f5e" stroke-width="1.5"/>
+    <rect x="0" y="0" width="230" height="44" rx="14" fill="#f43f5e" opacity="0.15"/>
+    <circle cx="26" cy="22" r="10" fill="#f43f5e"/>
+    <text x="26" y="27" font-family="sans-serif" font-size="12" font-weight="bold" fill="#ffffff" text-anchor="middle">6</text>
+    <text x="46" y="27" font-family="sans-serif" font-size="14" font-weight="700" fill="#f8fafc">Business Logic</text>
+
+    <rect x="12" y="55" width="206" height="35" rx="6" fill="#0b1120" stroke="#f43f5e"/>
+    <text x="20" y="78" font-family="ui-monospace, monospace" font-size="11" font-weight="bold" fill="#f43f5e">services/auth.service.ts</text>
+
+    <!-- Step-by-step logic box -->
+    <rect x="12" y="98" width="206" height="365" rx="8" fill="#0b1120" stroke="#334155"/>
+    <text x="20" y="120" font-family="sans-serif" font-size="10" font-weight="bold" fill="#64748b">REGISTER METHOD WORKFLOW</text>
+
+    <text x="20" y="145" font-family="sans-serif" font-size="11" font-weight="bold" fill="#38bdf8">1. Collision Check</text>
+    <text x="28" y="162" font-family="sans-serif" font-size="9.5" fill="#cbd5e1">• Queries DB for email OR user</text>
+    <text x="28" y="177" font-family="sans-serif" font-size="9.5" fill="#f43f5e">• If match ➔ throws AppError(409)</text>
+
+    <text x="20" y="202" font-family="sans-serif" font-size="11" font-weight="bold" fill="#38bdf8">2. Password Hashing</text>
+    <text x="28" y="219" font-family="sans-serif" font-size="9.5" fill="#cbd5e1">• bcrypt.hash(password, 10)</text>
+    <text x="28" y="234" font-family="sans-serif" font-size="9" fill="#94a3b8">One-way salt hash</text>
+
+    <text x="20" y="259" font-family="sans-serif" font-size="11" font-weight="bold" fill="#38bdf8">3. Atomic DB Transaction</text>
+    <text x="28" y="276" font-family="sans-serif" font-size="9.5" fill="#cbd5e1">• db.transaction(async (tx))</text>
+    <text x="28" y="293" font-family="sans-serif" font-size="9.5" fill="#cbd5e1">• INSERT INTO users</text>
+    <text x="28" y="310" font-family="sans-serif" font-size="9.5" fill="#cbd5e1">• INSERT INTO profiles</text>
+
+    <text x="20" y="336" font-family="sans-serif" font-size="11" font-weight="bold" fill="#38bdf8">4. Token Minting (Session)</text>
+    <text x="28" y="353" font-family="sans-serif" font-size="9.5" fill="#cbd5e1">• signAccessToken(user)</text>
+    <text x="28" y="370" font-family="sans-serif" font-size="9.5" fill="#cbd5e1">• signRefreshToken(user)</text>
+    <text x="28" y="387" font-family="sans-serif" font-size="9.5" fill="#cbd5e1">• hashToken(refreshToken)</text>
+    <text x="28" y="404" font-family="sans-serif" font-size="9.5" fill="#cbd5e1">• INSERT INTO refresh_tokens</text>
+
+    <text x="20" y="432" font-family="sans-serif" font-size="11" font-weight="bold" fill="#10b981">5. Return Clean User</text>
+    <text x="28" y="450" font-family="sans-serif" font-size="9" fill="#94a3b8">{ id, username, email, name, createdAt }</text>
+
+    <!-- Error Source Badge -->
+    <rect x="12" y="470" width="206" height="35" rx="4" fill="#4c0519" stroke="#f43f5e"/>
+    <text x="20" y="491" font-family="sans-serif" font-size="9.5" font-weight="bold" fill="#fecdd3">⚡ ERROR SOURCE 3 ➔ 409 Conflict</text>
+  </g>
+
+  <!-- Arrow Col 6 -> Col 7 -->
+  <path d="M 1540 380 L 1575 380" stroke="#10b981" stroke-width="2.5" marker-end="url(#arrow-emerald)"/>
+
+  <!-- ========================================================================= -->
+  <!-- COLUMN 7: DATABASE LAYER -->
+  <!-- ========================================================================= -->
+  <g transform="translate(1580, 120)" filter="url(#shadow)">
+    <rect width="230" height="520" rx="14" fill="url(#dbCardGrad)" stroke="#ef4444" stroke-width="2"/>
+    <rect x="0" y="0" width="230" height="44" rx="14" fill="#ef4444" opacity="0.2"/>
+    <circle cx="26" cy="22" r="10" fill="#ef4444"/>
+    <text x="26" y="27" font-family="sans-serif" font-size="12" font-weight="bold" fill="#0f172a" text-anchor="middle">7</text>
+    <text x="46" y="27" font-family="sans-serif" font-size="14" font-weight="700" fill="#f8fafc">Database Layer</text>
+
+    <rect x="12" y="55" width="206" height="40" rx="6" fill="#0f172a" stroke="#10b981"/>
+    <text x="20" y="74" font-family="ui-monospace, monospace" font-size="10.5" font-weight="bold" fill="#34d399">db/schema.ts</text>
+    <text x="20" y="88" font-family="sans-serif" font-size="9" fill="#94a3b8">Drizzle ORM Schemas</text>
+
+    <!-- Table 1: users -->
+    <rect x="12" y="105" width="206" height="100" rx="6" fill="#0f172a" stroke="#334155"/>
+    <text x="20" y="125" font-family="sans-serif" font-size="11" font-weight="bold" fill="#e2e8f0">TABLE: users</text>
+    <text x="20" y="143" font-family="ui-monospace, monospace" font-size="9" fill="#cbd5e1">• id (UUID, PK)</text>
+    <text x="20" y="159" font-family="ui-monospace, monospace" font-size="9" fill="#38bdf8">• username (UNIQUE, 50)</text>
+    <text x="20" y="175" font-family="ui-monospace, monospace" font-size="9" fill="#38bdf8">• email (UNIQUE, 255)</text>
+    <text x="20" y="191" font-family="ui-monospace, monospace" font-size="9" fill="#cbd5e1">• password_hash (bcrypt)</text>
+
+    <!-- Table 2: profiles -->
+    <rect x="12" y="215" width="206" height="85" rx="6" fill="#0f172a" stroke="#334155"/>
+    <text x="20" y="235" font-family="sans-serif" font-size="11" font-weight="bold" fill="#e2e8f0">TABLE: profiles (1:1)</text>
+    <text x="20" y="253" font-family="ui-monospace, monospace" font-size="9" fill="#cbd5e1">• id (UUID, PK)</text>
+    <text x="20" y="269" font-family="ui-monospace, monospace" font-size="9" fill="#a855f7">• user_id (FK ➔ users.id)</text>
+    <text x="20" y="285" font-family="ui-monospace, monospace" font-size="9" fill="#cbd5e1">• name (Engineer name)</text>
+
+    <!-- Table 3: refresh_tokens -->
+    <rect x="12" y="310" width="206" height="95" rx="6" fill="#0f172a" stroke="#334155"/>
+    <text x="20" y="330" font-family="sans-serif" font-size="11" font-weight="bold" fill="#e2e8f0">TABLE: refresh_tokens</text>
+    <text x="20" y="348" font-family="ui-monospace, monospace" font-size="9" fill="#cbd5e1">• id (UUID, PK)</text>
+    <text x="20" y="364" font-family="ui-monospace, monospace" font-size="9" fill="#a855f7">• user_id (FK ➔ users.id)</text>
+    <text x="20" y="380" font-family="ui-monospace, monospace" font-size="9" fill="#cbd5e1">• token (SHA-256 hash)</text>
+    <text x="20" y="396" font-family="ui-monospace, monospace" font-size="9" fill="#cbd5e1">• expires_at (7 days)</text>
+
+    <!-- config/db.ts connection -->
+    <rect x="12" y="415" width="206" height="50" rx="6" fill="#0f172a" stroke="#10b981"/>
+    <text x="20" y="433" font-family="ui-monospace, monospace" font-size="10" font-weight="bold" fill="#10b981">config/db.ts</text>
+    <text x="20" y="450" font-family="sans-serif" font-size="9" fill="#34d399">Supabase Postgres Pool</text>
+
+    <!-- Error Source Badge -->
+    <rect x="12" y="473" width="206" height="35" rx="4" fill="#450a0a" stroke="#ef4444"/>
+    <text x="20" y="494" font-family="sans-serif" font-size="9.5" font-weight="bold" fill="#fca5a5">⚡ ERROR SOURCE 4 ➔ 500 DB Crash</text>
+  </g>
+
+  <!-- ========================================================================= -->
+  <!-- SUCCESS RETURN PATH (GREEN) -->
+  <!-- ========================================================================= -->
+  <path d="M 1695 640 L 1695 665 L 130 665 L 130 640" fill="none" stroke="#10b981" stroke-width="2.5" stroke-dasharray="6,4" marker-end="url(#arrow-emerald)"/>
+  <rect x="710" y="650" width="420" height="30" rx="6" fill="#064e3b" stroke="#10b981" stroke-width="1.5"/>
+  <text x="920" y="670" font-family="ui-monospace, monospace" font-size="12" font-weight="bold" fill="#34d399" text-anchor="middle">
+    SUCCESS RETURN: HTTP 201 Created (JSON Body + HttpOnly Cookie)
+  </text>
+
+  <!-- ========================================================================= -->
+  <!-- 4 COLORED ERROR PIPES DROPPING DOWN TO THE 4 ERROR CARDS -->
+  <!-- ========================================================================= -->
+  <!-- Pipe 1: Amber from Col 3 (authLimiter) ➔ drops to Error Card 1 -->
+  <path d="M 632 640 L 632 725 L 210 725 L 210 760" fill="none" stroke="#f59e0b" stroke-width="2.5" stroke-dasharray="4,4" marker-end="url(#arrow-amber)"/>
+
+  <!-- Pipe 2: Yellow from Col 4 (Zod Validator) ➔ drops to Error Card 2 -->
+  <path d="M 895 640 L 895 725 L 575 725 L 575 760" fill="none" stroke="#eab308" stroke-width="2.5" stroke-dasharray="4,4" marker-end="url(#arrow-yellow)"/>
+
+  <!-- Pipe 3: Rose from Col 6 (Collision Check) ➔ drops to Error Card 3 -->
+  <path d="M 1425 640 L 1425 725 L 940 725 L 940 760" fill="none" stroke="#f43f5e" stroke-width="2.5" stroke-dasharray="4,4" marker-end="url(#arrow-rose)"/>
+
+  <!-- Pipe 4: Red from Col 7 (Database Layer) ➔ drops to Error Card 4 -->
+  <path d="M 1695 640 L 1695 725 L 1315 725 L 1315 760" fill="none" stroke="#ef4444" stroke-width="2.5" stroke-dasharray="4,4" marker-end="url(#arrow-red)"/>
+
+  <!-- ========================================================================= -->
+  <!-- BOTTOM PANEL: CENTRALIZED ERROR HANDLING (DISTINCT & EYE-FRIENDLY) -->
+  <!-- ========================================================================= -->
+  <g transform="translate(40, 760)" filter="url(#shadow)">
+    <!-- Container background with neutral dark slate -->
+    <rect width="1760" height="340" rx="16" fill="#0b1120" stroke="#334155" stroke-width="1.5"/>
+    <rect x="0" y="0" width="1760" height="46" rx="16" fill="#1e293b"/>
+    <circle cx="28" cy="23" r="11" fill="#ef4444"/>
+    <text x="28" y="28" font-family="sans-serif" font-size="13" font-weight="bold" fill="#ffffff" text-anchor="middle">!</text>
+    <text x="50" y="28" font-family="sans-serif" font-size="15" font-weight="800" fill="#f8fafc">
+      Global Centralized Error Pipeline (server/src/middleware/errorHandler.ts)
+    </text>
+    <text x="1730" y="28" font-family="ui-monospace, monospace" font-size="12" font-weight="bold" fill="#94a3b8" text-anchor="end">
+      4 DISTINCT ERROR ORIGINS &amp; SEPARATE EYE-FRIENDLY ERROR CHANNELS
+    </text>
+
+    <!-- ==================== ERROR CARD 1: 429 TOO MANY REQUESTS (AMBER) ==================== -->
+    <g transform="translate(25, 65)">
+      <rect width="405" height="250" rx="10" fill="url(#amberGrad)" stroke="#f59e0b" stroke-width="2"/>
+      
+      <!-- Source Origin Badge -->
+      <rect x="14" y="14" width="230" height="24" rx="4" fill="#78350f"/>
+      <text x="20" y="30" font-family="sans-serif" font-size="10" font-weight="bold" fill="#fde68a">
+        FROM: Register Middlewares (Step 3)
+      </text>
+
+      <!-- Status Code Banner -->
+      <rect x="255" y="14" width="135" height="24" rx="4" fill="#b45309"/>
+      <text x="322" y="30" font-family="ui-monospace, monospace" font-size="11" font-weight="bold" fill="#ffffff" text-anchor="middle">
+        HTTP 429
+      </text>
+
+      <text x="16" y="65" font-family="sans-serif" font-size="13" font-weight="bold" fill="#fbbf24">
+        1. Rate Limit Block (authLimiter)
+      </text>
+
+      <text x="16" y="90" font-family="sans-serif" font-size="11" fill="#fed7aa">
+        • Trigger: Client IP makes &gt;10 signups / 15 mins
+      </text>
+      <text x="16" y="110" font-family="sans-serif" font-size="11" fill="#fed7aa">
+        • File: server/src/middleware/rateLimit.middleware.ts
+      </text>
+      <text x="16" y="130" font-family="sans-serif" font-size="11" fill="#fed7aa">
+        • Defense: Protects against automated spam bot creation
+      </text>
+
+      <!-- Response Box -->
+      <rect x="14" y="148" width="375" height="88" rx="6" fill="#0b1120" stroke="#b45309"/>
+      <text x="24" y="168" font-family="ui-monospace, monospace" font-size="10" font-weight="bold" fill="#fde68a">RESPONSE (JSON):</text>
+      <text x="24" y="188" font-family="ui-monospace, monospace" font-size="9.5" fill="#fcd34d">"error": "Too Many Requests",</text>
+      <text x="24" y="206" font-family="ui-monospace, monospace" font-size="9" fill="#cbd5e1">"message": "Too many authentication attempts...",</text>
+      <text x="24" y="222" font-family="ui-monospace, monospace" font-size="9" fill="#94a3b8">"retryAfter": 900</text>
+    </g>
+
+    <!-- ==================== ERROR CARD 2: 400 VALIDATION ERROR (YELLOW) ==================== -->
+    <g transform="translate(460, 65)">
+      <rect width="405" height="250" rx="10" fill="url(#yellowGrad)" stroke="#eab308" stroke-width="2"/>
+      
+      <!-- Source Origin Badge -->
+      <rect x="14" y="14" width="220" height="24" rx="4" fill="#713f12"/>
+      <text x="20" y="30" font-family="sans-serif" font-size="10" font-weight="bold" fill="#fef08a">
+        FROM: Zod Validator (Step 4)
+      </text>
+
+      <!-- Status Code Banner -->
+      <rect x="255" y="14" width="135" height="24" rx="4" fill="#a16207"/>
+      <text x="322" y="30" font-family="ui-monospace, monospace" font-size="11" font-weight="bold" fill="#ffffff" text-anchor="middle">
+        HTTP 400
+      </text>
+
+      <text x="16" y="65" font-family="sans-serif" font-size="13" font-weight="bold" fill="#fde047">
+        2. Input Validation Failure (ZodError)
+      </text>
+
+      <text x="16" y="90" font-family="sans-serif" font-size="11" fill="#fef9c3">
+        • Trigger: Weak password, invalid email, short user
+      </text>
+      <text x="16" y="110" font-family="sans-serif" font-size="11" fill="#fef9c3">
+        • File: validators/auth.validator.ts (registerSchema)
+      </text>
+      <text x="16" y="130" font-family="sans-serif" font-size="11" fill="#fef9c3">
+        • Action: Catches ZodError &amp; maps exact field issues
+      </text>
+
+      <!-- Response Box -->
+      <rect x="14" y="148" width="375" height="88" rx="6" fill="#0b1120" stroke="#a16207"/>
+      <text x="24" y="168" font-family="ui-monospace, monospace" font-size="10" font-weight="bold" fill="#fef08a">RESPONSE (JSON):</text>
+      <text x="24" y="188" font-family="ui-monospace, monospace" font-size="9.5" fill="#fde047">"error": "Validation Error",</text>
+      <text x="24" y="206" font-family="ui-monospace, monospace" font-size="9" fill="#cbd5e1">"details": [{ "field": "password",</text>
+      <text x="36" y="222" font-family="ui-monospace, monospace" font-size="9" fill="#cbd5e1">"message": "Password must contain at least 1 number" }]</text>
+    </g>
+
+    <!-- ==================== ERROR CARD 3: 409 CONFLICT (ROSE / PINK) ==================== -->
+    <g transform="translate(895, 65)">
+      <rect width="405" height="250" rx="10" fill="url(#roseGrad)" stroke="#f43f5e" stroke-width="2"/>
+      
+      <!-- Source Origin Badge -->
+      <rect x="14" y="14" width="220" height="24" rx="4" fill="#881337"/>
+      <text x="20" y="30" font-family="sans-serif" font-size="10" font-weight="bold" fill="#fecdd3">
+        FROM: Business Logic (Step 6)
+      </text>
+
+      <!-- Status Code Banner -->
+      <rect x="255" y="14" width="135" height="24" rx="4" fill="#be123c"/>
+      <text x="322" y="30" font-family="ui-monospace, monospace" font-size="11" font-weight="bold" fill="#ffffff" text-anchor="middle">
+        HTTP 409
+      </text>
+
+      <text x="16" y="65" font-family="sans-serif" font-size="13" font-weight="bold" fill="#fda4af">
+        3. Account Collision (AppError.conflict)
+      </text>
+
+      <text x="16" y="90" font-family="sans-serif" font-size="11" fill="#ffe4e6">
+        • Trigger: Email or username already registered
+      </text>
+      <text x="16" y="110" font-family="sans-serif" font-size="11" fill="#ffe4e6">
+        • File: services/auth.service.ts + PG Unique (23505)
+      </text>
+      <text x="16" y="130" font-family="sans-serif" font-size="11" fill="#ffe4e6">
+        • Action: Stops registration transaction before DB insert
+      </text>
+
+      <!-- Response Box -->
+      <rect x="14" y="148" width="375" height="88" rx="6" fill="#0b1120" stroke="#be123c"/>
+      <text x="24" y="168" font-family="ui-monospace, monospace" font-size="10" font-weight="bold" fill="#fecdd3">RESPONSE (JSON):</text>
+      <text x="24" y="188" font-family="ui-monospace, monospace" font-size="9.5" fill="#fda4af">"error": "Conflict",</text>
+      <text x="24" y="206" font-family="ui-monospace, monospace" font-size="9" fill="#cbd5e1">"message": "A user with this email address</text>
+      <text x="24" y="222" font-family="ui-monospace, monospace" font-size="9" fill="#cbd5e1">already exists"</text>
+    </g>
+
+    <!-- ==================== ERROR CARD 4: 500 SERVER ERROR (CRIMSON RED) ==================== -->
+    <g transform="translate(1330, 65)">
+      <rect width="405" height="250" rx="10" fill="url(#redGrad)" stroke="#ef4444" stroke-width="2"/>
+      
+      <!-- Source Origin Badge -->
+      <rect x="14" y="14" width="220" height="24" rx="4" fill="#7f1d1d"/>
+      <text x="20" y="30" font-family="sans-serif" font-size="10" font-weight="bold" fill="#fca5a5">
+        FROM: Database Layer (Step 7)
+      </text>
+
+      <!-- Status Code Banner -->
+      <rect x="255" y="14" width="135" height="24" rx="4" fill="#b91c1c"/>
+      <text x="322" y="30" font-family="ui-monospace, monospace" font-size="11" font-weight="bold" fill="#ffffff" text-anchor="middle">
+        HTTP 500
+      </text>
+
+      <text x="16" y="65" font-family="sans-serif" font-size="13" font-weight="bold" fill="#f87171">
+        4. Internal Database Crash / Outage
+      </text>
+
+      <text x="16" y="90" font-family="sans-serif" font-size="11" fill="#fee2e2">
+        • Trigger: Supabase PostgreSQL outage, network drop
+      </text>
+      <text x="16" y="110" font-family="sans-serif" font-size="11" fill="#fee2e2">
+        • File: config/db.ts or unhandled runtime bug
+      </text>
+      <text x="16" y="130" font-family="sans-serif" font-size="11" fill="#fee2e2">
+        • Action: Masks sensitive stack trace in production
+      </text>
+
+      <!-- Response Box -->
+      <rect x="14" y="148" width="375" height="88" rx="6" fill="#0b1120" stroke="#b91c1c"/>
+      <text x="24" y="168" font-family="ui-monospace, monospace" font-size="10" font-weight="bold" fill="#fca5a5">RESPONSE (JSON):</text>
+      <text x="24" y="188" font-family="ui-monospace, monospace" font-size="9.5" fill="#f87171">"error": "Internal Server Error",</text>
+      <text x="24" y="206" font-family="ui-monospace, monospace" font-size="9" fill="#cbd5e1">"message": "Something went wrong on our end.</text>
+      <text x="24" y="222" font-family="ui-monospace, monospace" font-size="9" fill="#cbd5e1">Please try again later."</text>
+    </g>
+  </g>
+
+  <!-- Return Path from Error Handler back to Client -->
+  <path d="M 40 920 L 15 920 L 15 640 L 130 640" fill="none" stroke="#ef4444" stroke-width="2.5" stroke-dasharray="6,4" marker-end="url(#arrow-red)"/>
+  <rect x="2" y="770" width="135" height="28" rx="4" fill="#7f1d1d" stroke="#ef4444"/>
+  <text x="69" y="788" font-family="ui-monospace, monospace" font-size="10" font-weight="bold" fill="#fca5a5" text-anchor="middle">ERROR TO CLIENT</text>
+</svg>
